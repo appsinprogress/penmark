@@ -1,4 +1,5 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: { //all these files are individually accessible by the applications making use of this library
@@ -24,5 +25,10 @@ module.exports = {
         headers: {
             "Access-Control-Allow-Origin": "*",
         }
-      },
+    },
+    plugins: [//copy index.html to dist folder
+        new HtmlWebpackPlugin({
+          template: 'src/index.html'
+        })
+    ]
 };

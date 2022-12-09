@@ -15,6 +15,7 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
+    "html-webpack-plugin": "^5.5.0",
     "js-base64": "^3.7.3",
     "octokit": "^2.0.10"
   }
