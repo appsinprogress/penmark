@@ -1,0 +1,21 @@
+{
+  "name": "edit-blog-from-site",
+  "version": "1.0.0",
+  "description": "A package to enable a CMS embedded within you website",
+  "scripts": {
+    "build": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "webpack serve"
+  },
+  "author": "Thomas Gauvin",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1",
+    "webpack-dev-server": "^4.11.1"
+  },
+  "dependencies": {
+    "js-base64": "^3.7.3",
+    "octokit": "^2.0.10"
+  }
+}
