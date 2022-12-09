@@ -8,7 +8,7 @@ import { initDrafts } from './DraftsController.js';
 try{
     await getAccessToken();
 
-    var script = document.querySelector('script[src="http://localhost:9000/DraftsClient.js"]');//TODO: make this dynamic
+    var script = document.querySelector(`script[src="${__JS_PACKAGE_HOST__}/DraftsClient.js"]`);//TODO: make this dynamic
     
     //insert styles into html
     script.insertAdjacentHTML('afterend', /*html*/`
@@ -122,7 +122,7 @@ try{
     `);
     
     //insert script for prosemirror into html
-    dynamicallyLoadScript(script, 'http://localhost:9000/prosemirror.js'); //TODO: make this dynamic
+    dynamicallyLoadScript(script, `${__JS_PACKAGE_HOST__}/prosemirror.js`); //TODO: make this dynamic
     
     initDrafts();
 }

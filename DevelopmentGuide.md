@@ -15,3 +15,7 @@ To serve the package for local development, run `npm run serve`. This uses webpa
 This project compiles the files from folder `/src` into the following files in the `/dist` folder: `DraftsClient.js`, `LoginClient.js`, `Modal.js`, `PostClient.js`, `prosemirror.js`. These are separate files that are imported independently by the website using this package.
 
 `DraftsClient.js`, `PostClient.js`, and `LoginClient.js` are responsible for injecting the drafts component, post editing button component, and the login/logout buttons component. `Modal.js` and `prosemirror.js` are dependencies for these.
+
+### Package for distribution
+
+To package the library, replace the `__JS_PACKAGE_HOST__` value in `webpack.config.js`. This value needs to be the future url of the package. Next, run `npm publish` to publish the package to npm. Make sure to change the README as well. The package can then be downloaded from jsdelivr into any HTML project.

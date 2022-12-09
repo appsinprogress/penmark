@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
     entry: { //all these files are individually accessible by the applications making use of this library
@@ -11,7 +12,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
     },
-    mode: 'development', //change to production when exporting
+    mode: 'production', //change to production when exporting
     experiments: {
         topLevelAwait: true
     },
@@ -24,5 +25,12 @@ module.exports = {
         headers: {
             "Access-Control-Allow-Origin": "*",
         }
-    }
+    },
+    //replace __JS_PACKAGE_HOST__ strings with the host of this package with the DefinePlugin
+    plugins: [
+        new webpack.DefinePlugin({
+            // __JS_PACKAGE_HOST__: JSON.stringify("http://localhost:9000") //for local development
+            __JS_PACKAGE_HOST__: JSON.stringify("https://cdn.jsdelivr.net/npm/edit-blog-from-site@0.0.4/dist") //for production
+        })
+    ]
 };

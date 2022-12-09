@@ -12,7 +12,7 @@ try{
     //ensuring that code is not unnecessarily executed/imported
     await getAccessToken();
 
-    var script = document.querySelector('script[src="http://localhost:9000/PostClient.js"]'); //TODO: make this dynamic
+    var script = document.querySelector(`script[src="${__JS_PACKAGE_HOST__}/PostClient.js"]`); //TODO: make this dynamic
 
     var postFilePath = script.getAttribute("postfilepath");
 
@@ -49,7 +49,7 @@ try{
     `);
 
     //insert script for prosemirror into html
-    dynamicallyLoadScript(script, 'http://localhost:9000/prosemirror.js'); //TODO: make this dynamic
+    dynamicallyLoadScript(script, `${__JS_PACKAGE_HOST__}/prosemirror.js`); //TODO: make this dynamic
 
     initPostEditor(postFilePath);
 }

@@ -1,4 +1,4 @@
-var script = document.querySelector('script[src="http://localhost:9000/LoginClient.js"]'); //TODO: make this dynamic
+var script = document.querySelector(`script[src="${__JS_PACKAGE_HOST__}/LoginClient.js"]`); //TODO: make this dynamic
 
 script.insertAdjacentHTML('afterend', /*html*/`
 
