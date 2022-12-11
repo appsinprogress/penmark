@@ -1,7 +1,16 @@
+//retrieve the head
+var head = document.getElementsByTagName('head')[0];
+//add the meta tag to the head
+var meta = document.createElement('meta');
+meta.name = "viewport";
+meta.content = "width=device-width, initial-scale=1.0";
+head.appendChild(meta);
+
+//retrieve the script
 var script = document.querySelector(`script[src="${__JS_PACKAGE_HOST__}/LoginClient.js"]`); //TODO: make this dynamic
 
+//add the buttons to the page
 script.insertAdjacentHTML('afterend', /*html*/`
-
     <style>
       /* CSS styles for the buttons */
       .button {
