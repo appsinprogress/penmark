@@ -34,3 +34,4 @@ Here is how to import these 3 components:
         ```
     2. This will add an edit button only for logged in users.
 
+Inspired by [utterances](https://github.com/utterance/utterances).
