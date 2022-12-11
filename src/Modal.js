@@ -521,6 +521,11 @@ modalTemplate.innerHTML = /*html*/ `
       padding: 2px 8px;
       border-radius: 20px;
     }
+
+    .ProseMirror-menubar {
+      display: flex;
+      flex-wrap: wrap;
+    }
   </style>
 
   <div id="modal" class="modal">
