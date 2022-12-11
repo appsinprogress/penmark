@@ -1,6 +1,6 @@
 # Edit Blog from Site 📝🐧
 
-A CMS you can embed directly into you Markdowb-based, Github-backed website/blog. No need to switch between multiple websites, your website/blog is the only place you need.
+A CMS you can embed directly into you Markdown-based, Github-backed website/blog. No need to switch between multiple websites, your website/blog is the only place you need.
 
 * Open source. 🙌
 * No tracking/ads. 📡🚫
