@@ -1,6 +1,3 @@
-utterances 🔮
-A lightweight comments widget built on GitHub issues. Use GitHub issues for blog comments, wiki pages and more!
-
 # Edit Blog from Site 📝🐧
 
 A CMS you can embed directly into you Markdowb-based, Github-backed website/blog. No need to switch between multiple websites, your website/blog is the only place you need.
