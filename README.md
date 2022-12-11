@@ -1,4 +1,4 @@
-# Edit Blog from Site Package
+# Edit Blog from Site
 
 This package is a set of 3 components that allow you to embed a CMS directly within your Markdown-based, GitHub backed website/blog.
 
