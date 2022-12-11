@@ -36,21 +36,6 @@ modalTemplate.innerHTML = /*html*/ `
         padding: 1em;
     }
 
-    /* The Close Button */
-    .close {
-      color: #aaa;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .close:hover,
-    .close:focus {
-      color: black;
-      text-decoration: none;
-      cursor: pointer;
-      background-color: black;
-    }
   </style>
   <style>
     .ProseMirror { height: 100%; overflow-y: auto; box-sizing: border-box; -moz-box-sizing: border-box }
@@ -368,7 +353,7 @@ modalTemplate.innerHTML = /*html*/ `
   }
 
   #prosemirror {
-    height: 85%;
+    height: 91%;
   }
 
   #editor-container {
@@ -377,8 +362,13 @@ modalTemplate.innerHTML = /*html*/ `
     margin: auto;
   }
 
+  #top-bar-container {
+    display: flex;
+    align-items: center;
+  }
+
   #editor, .editor {
-    height: calc(100% - 40px);
+    height: 100%;
 
     background: white;
     color: black;
@@ -409,18 +399,6 @@ modalTemplate.innerHTML = /*html*/ `
   }
   
   .ProseMirror p { margin-bottom: 1em }
-  
-  #close-container {
-    display: flex;
-    justify-content: right;
-    padding-bottom: 0.4em;
-    font-size: 2em;
-    line-height: 0.9em;
-  }
-
-  #close:hover{
-    cursor: pointer;
-  }
 
   .blog-cms--button-container{
     display: flex;
@@ -440,6 +418,7 @@ modalTemplate.innerHTML = /*html*/ `
   }
 
   .blog-cms--button {
+    display: flex;
     background-color: #282828;
     border: 2px solid #282828;
     color: white;
@@ -447,10 +426,17 @@ modalTemplate.innerHTML = /*html*/ `
     font-weight: 600;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
     font-size: 16px;
     border-radius: 8px;
     margin: 0.5em 0.2em;
+  }
+
+  .button-text {
+    margin-left: 4px;
+  }
+
+  .background-color-hover:hover {
+    background-color: #dfdfdf;
   }
 
   @media only screen and (max-width: 600px) {
@@ -475,8 +461,6 @@ modalTemplate.innerHTML = /*html*/ `
     background-color: #ffffff;
     border: 2px solid #282828;
     border-radius: 18px;
-    margin-bottom: 0.7em;
-    width: 115px;
     margin: 0.5em 0.2em;
   }
 
@@ -494,7 +478,7 @@ modalTemplate.innerHTML = /*html*/ `
 
     #editor-style-buttons label {
         display: inline-block;
-        padding: 2px 7px;
+        padding: 2px 4px;
         font-family: Arial;
         font-size: 16px;
         cursor: pointer;
@@ -507,49 +491,63 @@ modalTemplate.innerHTML = /*html*/ `
       }
 
     #file-path {
-      margin-bottom: 0.4em;
-        font-size: 1.75em;
-        font-weight: 600;
-        overflow: scroll;
-        width: 80%;
-        border: 0;
-        background-color: white;
+      margin-left: 0.4em;
+      font-size: 1.4em;
+      font-weight: 600;
+      overflow: scroll;
+      width: 80%;
+      border: 0;
+      background-color: white;
     }
 
+    .edit-blog-from-site--black {
+      color: #111;
+    }
+
+    #wysiradio:checked + label {
+      display: none;
+    }
+
+    #mdradio:checked + label {
+      display: none;
+    }
+
+    .back-button {
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    #back-container {
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
   </style>
 
   <div id="modal" class="modal">
     <div class="modal-content">
       <div id="editor-container">
-        <div id="close-container">
-            <span id="close">&times;</span>
-        </div>
-        <div style="    display: flex;
-        align-items: center; max-width: 100%;
-        overflow: auto;
-        white-space: nowrap;">
+        <div id="top-bar-container">
+          <div id="back-container" class="background-color-hover">
+            <i id="save" class="back-button fa fa-arrow-left edit-blog-from-site--black" aria-hidden="true"></i>
+          </div>
+          <input type="text" id="file-path" disabled />
+          <div style="text-align: center" id="editor-style-buttons" class="background-color-hover">
+              <input type="radio" name="inputformat" value="markdown" id="mdradio" checked="">
+              <label class="background-color-hover" for="mdradio">M<i class="fa fa-arrow-down" aria-hidden="true"></i></label>
 
-            <input type="text" id="file-path" disabled />
+              <input type="radio" name="inputformat" id="wysiradio" value="prosemirror"> 
+              <label class="background-color-hover" for="wysiradio"><i class="fa fa-header" aria-hidden="true" style="margin-right: -2px;"></i>
+              <i class="fa fa-indent" aria-hidden="true"></i>
+              </label>
+          </div>
+          <button class="blog-cms--button blog-cms--button--delete background-color-hover" id="delete"><i class="fa fa-trash" aria-hidden="true"></i>
+          <span class="button-text">Delete</span></button>
+          <button class="blog-cms--button blog-cms--button--outline background-color-hover" id="publish"><i class="fa fa-paper-plane" aria-hidden="true"></i>
+          <span class="button-text">Publish</span></button>
         </div>
         <div id="prosemirror">
             <div style="display: flex; justify-content: space-between;">
-              <div style="text-align: center" id="editor-style-buttons">
-                  <input type="radio" name="inputformat" value="markdown" id="mdradio" checked="">
-                  <label for="mdradio">M<i class="fa fa-arrow-down" aria-hidden="true"></i></label>
 
-                  <input type="radio" name="inputformat" id="wysiradio" value="prosemirror"> 
-                  <label for="wysiradio"><i class="fa fa-header" aria-hidden="true"></i>
-                  <i class="fa fa-indent" aria-hidden="true"></i>
-                  </label>
-              </div>
-              <div class="blog-cms--button-container">
-                  <button class="blog-cms--button blog-cms--button--delete" id="delete"><i class="fa fa-trash" aria-hidden="true"></i>
-                  <span class="button-text">Delete</span></button>
-                  <button class="blog-cms--button blog-cms--button--outline" id="publish"><i class="fa fa-paper-plane" aria-hidden="true"></i>
-                  <span class="button-text">Publish</span></button>
-                  <button class="blog-cms--button" id="save"><i class="fa fa-floppy-o"></i>
-                  <span class="button-text">Save</span></button>
-              </div>
             </div>
 
             <div id="editor" style="margin-bottom: 0"></div>
@@ -808,7 +806,9 @@ class ModalComponent extends HTMLElement {
   //lifecycle function that is called when the component is added to the DOM
   connectedCallback(){
     this.innerHTML = modalTemplate.innerHTML;
-    document.getElementById("file-path").value = this.filePath;
+    //hide _drafts/ from path for style reasons
+    document.getElementById("file-path").value = this.filePath.replace("_drafts/", ""); 
+
     if(this.isNewFile){
       document.getElementById("delete").style.visibility = 'hidden';
       document.getElementById("file-path").disabled = false;
@@ -816,13 +816,6 @@ class ModalComponent extends HTMLElement {
     }
 
     document.body.style.height = '100vh';
-
-    // emit close being clicked
-    document.getElementById("close").onclick = () => {
-        console.log("closed"); 
-        document.body.style.height = '100%';
-        this.dispatchEvent(this.closeEvent);
-    }
 
     //delete handler
     document.getElementById("delete").onclick = () => {

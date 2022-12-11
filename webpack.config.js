@@ -30,7 +30,7 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin({
             // __JS_PACKAGE_HOST__: JSON.stringify("http://localhost:9000") //for local development
-            __JS_PACKAGE_HOST__: JSON.stringify("https://cdn.jsdelivr.net/npm/edit-blog-from-site@0.0.9/dist") //for production
+            __JS_PACKAGE_HOST__: JSON.stringify("https://cdn.jsdelivr.net/npm/edit-blog-from-site@0.0.11/dist") //for production
         })
     ]
 };

@@ -49,7 +49,19 @@ function setupDrafts() {
             </button>
             </div>
         </div>
-        <i class="fa fa-pencil-square-o" id="cms-drafts-create" style="padding-right: 4px; cursor: pointer; transform: scale(1.3);"></i>
+        <style>
+            .button-container {
+                padding: 6px 6px 6px 12px;
+                margin: 2px;
+                border-radius: 20px;
+            }
+            .button-container:hover {
+                background-color: #e1e4e8;
+            }
+        </style>
+        <div class="button-container">
+            <i class="fa fa-pencil-square-o" id="cms-drafts-create" style="padding-right: 4px; cursor: pointer; transform: scale(1.3);"></i>
+        </div>
         </div>
         <div style="margin: auto; width: fit-content;">
         <div id="loadersmall" class="loadersmall"></div>
