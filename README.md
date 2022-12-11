@@ -1,8 +1,13 @@
-# Edit Blog from Site
+# Edit Blog from Site 📝🐧
 
-This package is a set of 3 components that allow you to embed a CMS directly within your Markdown-based, GitHub backed website/blog.
+A CMS you can embed directly into you Markdown-based, Github-backed website/blog. No need to switch between multiple websites, your website/blog is the only place you need.
 
-Here are the 3 components:
+* Open source. 🙌
+* No tracking/ads. 📡🚫
+* Markdown or WYSIWYG support. M⬇✍
+* Own your data: drafts are stored in your repo. 📝
+
+This package is a set of 3 components that allow you to enable this CMS experience:
 * Login: used to log get GitHub credentials
 * Drafts: used to create & edit drafts (stored in your own GitHub under folder _drafts)
 * Edit: used to edit existing blog posts
@@ -29,3 +34,4 @@ Here is how to import these 3 components:
         ```
     2. This will add an edit button only for logged in users.
 
+Inspired by [utterances](https://github.com/utterance/utterances).
