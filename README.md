@@ -1,8 +1,16 @@
-# Edit Blog from Site
+utterances 🔮
+A lightweight comments widget built on GitHub issues. Use GitHub issues for blog comments, wiki pages and more!
 
-This package is a set of 3 components that allow you to embed a CMS directly within your Markdown-based, GitHub backed website/blog.
+# Edit Blog from Site 📝🐧
 
-Here are the 3 components:
+A CMS you can embed directly into you Markdowb-based, Github-backed website/blog. No need to switch between multiple websites, your website/blog is the only place you need.
+
+* Open source. 🙌
+* No tracking/ads. 📡🚫
+* Markdown or WYSIWYG support. M⬇✍
+* Own your data: drafts are stored in your repo. 📝
+
+This package is a set of 3 components that allow you to enable this CMS experience:
 * Login: used to log get GitHub credentials
 * Drafts: used to create & edit drafts (stored in your own GitHub under folder _drafts)
 * Edit: used to edit existing blog posts
