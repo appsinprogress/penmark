@@ -3,7 +3,7 @@
 //to the target blog needed to provide the CMS functionality
 
 import { getAccessToken, dynamicallyLoadScript } from './shared.js';
-import { initDrafts } from './DraftsController.js';
+import { initDrafts } from './DraftsController.jsx';
 
 try{
     await getAccessToken();
@@ -118,11 +118,12 @@ try{
         <link rel="preconnect" href="https://api.github.com" />
         <link rel="preconnect" href="https://cdn.skypack.dev" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <div id="react"></div>
         <div id="cms-drafts" style="display: none;"></div>
     `);
     
     //insert script for prosemirror into html
-    dynamicallyLoadScript(script, `${__JS_PACKAGE_HOST__}/prosemirror.js`); //TODO: make this dynamic
+    // dynamicallyLoadScript(script, `${__JS_PACKAGE_HOST__}/prosemirror.js`); //TODO: make this dynamic
     
     initDrafts();
 }

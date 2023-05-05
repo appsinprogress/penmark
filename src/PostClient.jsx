@@ -5,7 +5,7 @@
 //this file must be added to the HTML where the desired buttons are to be placed
 
 import { getAccessToken, dynamicallyLoadScript } from './shared.js';
-import { initPostEditor } from './PostController.js';
+import { initPostEditor } from './PostController.jsx';
 
 try{
     //this function will throw an error if the user is not logged in,
@@ -13,7 +13,6 @@ try{
     await getAccessToken();
 
     var script = document.querySelector(`script[src="${__JS_PACKAGE_HOST__}/PostClient.js"]`); //TODO: make this dynamic
-
     var postFilePath = script.getAttribute("postfilepath");
 
     //insert styles and divs into html
@@ -49,7 +48,7 @@ try{
     `);
 
     //insert script for prosemirror into html
-    dynamicallyLoadScript(script, `${__JS_PACKAGE_HOST__}/prosemirror.js`); //TODO: make this dynamic
+    dynamicallyLoadScript(script, `${__JS_PACKAGE_HOST__}/prosemirror.js`);
 
     initPostEditor(postFilePath);
 }

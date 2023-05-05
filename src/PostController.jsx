@@ -1,6 +1,6 @@
 import { Octokit } from "octokit";
 import { getAccessToken } from "./shared.js";
-import "./Modal.js";
+import "./Modal.jsx";
 
 var postFilePathInGithub;
 var accessToken;
@@ -15,7 +15,7 @@ function openModal(){
   modal.filePath = postFilePathInGithub;
   modalParent.appendChild(modal);
 }
-
+ 
 function addButtonEventHandler(){
   const editButton = document.getElementById("edit-button");
   editButton.addEventListener("click", () => {
