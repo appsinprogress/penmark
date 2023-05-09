@@ -6,6 +6,7 @@ import {Root, Separator} from "@radix-ui/react-separator"
 import { Octokit } from "octokit";
 import { getAccessToken, getUser } from "./shared.js";
 import { Base64 } from 'js-base64';
+import { ProseMirrorEditorArchive } from "./ProseMirrorEditor_archive.jsx";
 import { ProseMirrorEditor } from "./ProseMirrorEditor.jsx";
 
 const accessToken = await getAccessToken();
