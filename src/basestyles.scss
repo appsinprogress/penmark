@@ -4,8 +4,9 @@ whole page, including the host website. This project should change styling outsi
 
 So, I've ejected from the Tailwind basestyles (see tailwind.config.js, preflight is false).
 
-This file is a copy of the Tailwind basestyles, and it's been scoped to only affect children of
-#modal-container with scss.
+This file is a modified copy of the Tailwind basestyles, and it's been scoped to only affect children of
+#modal-container with scss. This copy is modified to opt out of some base styles in favor of 
+Prosemirrors' default styles (due to the specificity of the base styles)
 
 Due to the specificity of these scoped base styles, Tailwind has lower CSS specificity and its classes
 don't apply. So, I've added !important to the Tailwind classes that are used in this project.
@@ -13,6 +14,8 @@ don't apply. So, I've added !important to the Tailwind classes that are used in 
 I usually only use !important as a last resort to avoid conflicts down the line. To avoid conflicts
 with host projects (tailwind class names are common), I've added a prefix to tailwind classes (see tailwind.config.js) 
 to avoid conflicts with host projects. 
+
+
 */
 
 #modal-container {
@@ -82,27 +85,30 @@ to avoid conflicts with host projects.
     text-decoration: underline dotted;
   }
   
-  /*
-  Remove the default font size and weight for headings.
-  */
   
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-size: inherit;
-    font-weight: inherit;
-  }
+  h1, h2, h3, h4, h5 { font-family: Merriweather; font-weight: 700; }
+  
+  h1 { font-size: 32px; line-height: 40px }
+  
+  h2 { font-size: 26px; line-height: 33px; margin: 37px 0 12px; }
+  
+  h3 { font-size: 22px; line-height: 26px; margin: 26px 0 12px; }
+  
+  h4 { font-size: 18px; line-height: 22px; margin: 25px 0 12px; }
+  
+  a { text-decoration: none }
+      
   
   /*
   Reset links to optimize for opt-in styling instead of opt-out.
   */
   
-  a {
-    color: inherit;
-    text-decoration: inherit;
+  a.blocklink:hover {
+    color: #0075ff;
+  }
+  
+  nav a.active, a:link, a:visited {
+    color: #0075ff;
   }
   
   /*
@@ -118,15 +124,38 @@ to avoid conflicts with host projects.
   1. Use the user's configured `mono` font family by default.
   2. Correct the odd `em` font sizing in all browsers.
   */
-  
-  code,
-  kbd,
-  samp,
+
+  code, pre { font-size: 14px; }
+  h2 code, h3 code { font-size: inherit; }
   pre {
-    font-family: theme('fontFamily.mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace); /* 1 */
-    font-size: 1em; /* 2 */
+    line-height: 22px;
+    padding-left: 20px;
+    overflow-x: auto;
+  }
+
+  h2.hr {
+    font-size: 12px;
+    margin: 50px 0 37px;
   }
   
+  hr, h2.hr:after {
+    display: block;
+    content: "";
+    border: none;
+    border-bottom: 2px solid #e5e5e5;
+    margin-top: 2px;
+  }
+  
+  hr {
+    margin: 45px 0 39px;
+  }
+
+  ul, ol {
+    p {
+      margin: 0 1em;
+    }
+  }
+           
   /*
   Add the correct font size in all browsers.
   */
@@ -283,21 +312,6 @@ to avoid conflicts with host projects.
   Removes the default spacing and border for appropriate elements.
   */
   
-  blockquote,
-  dl,
-  dd,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  hr,
-  figure,
-  p,
-  pre {
-    margin: 0;
-  }
   
   fieldset {
     margin: 0;
@@ -307,15 +321,7 @@ to avoid conflicts with host projects.
   legend {
     padding: 0;
   }
-  
-  ol,
-  ul,
-  menu {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  
+
   /*
   Prevent resizing textareas horizontally by default.
   */

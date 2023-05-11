@@ -143,9 +143,6 @@ function DraftsComponent() {
             <div id="loadersmall" className="loadersmall"></div>
         </div>
       }
-        <button onClick={()=> setShowModalBoolean(true)}>
-            Show modal
-        </button>
         {
             showModalBoolean ? <Modal setShowModalBoolean={setShowModalBoolean} draft={editingDraft}/> : null
         }

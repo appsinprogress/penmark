@@ -7,7 +7,8 @@ module.exports = {
         LoginClient: './src/LoginClient.jsx',
         PostClient: './src/PostClient.jsx',
         Modal: './src/Modal.jsx',
-        prosemirror: './src/prosemirror.js'
+        prosemirror: './src/prosemirror.js',
+        Title: './src/components/Title.jsx'
     },
     performance: {
         hints: false
@@ -34,7 +35,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
     },
-    mode: 'production', //change to production when exporting
+    mode: 'development', //change to production when exporting
     experiments: {
         topLevelAwait: true
     },
@@ -51,7 +52,8 @@ module.exports = {
     //replace __JS_PACKAGE_HOST__ strings with the host of this package with the DefinePlugin
     plugins: [
         new webpack.DefinePlugin({
-            __JS_PACKAGE_HOST__: JSON.stringify("http://localhost:9000") //for local development
+            __JS_PACKAGE_HOST__: JSON.stringify("http://10.0.0.169:9000") //for local development with host 0.0.0.0
+            // __JS_PACKAGE_HOST__: JSON.stringify("http://localhost:9000") //for local development
             // __JS_PACKAGE_HOST__: JSON.stringify("https://cdn.jsdelivr.net/npm/edit-blog-from-site@0.0.12/dist") //for production
         })
     ]

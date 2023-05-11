@@ -8,6 +8,7 @@ import { getAccessToken, getUser } from "./shared.js";
 import { Base64 } from 'js-base64';
 import { ProseMirrorEditorArchive } from "./ProseMirrorEditor_archive.jsx";
 import { ProseMirrorEditor } from "./ProseMirrorEditor.jsx";
+import { Title } from "./components/Title.jsx";
 
 const accessToken = await getAccessToken();
 
@@ -18,6 +19,7 @@ export function Modal({
         auth: accessToken
     });
 
+    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [title, setTitle] = useState('New blog post');
     const [showDropdown, setShowDropdown] = useState(false);
     const [fileContent, setFileContent] = useState('');
@@ -60,13 +62,11 @@ export function Modal({
             top: 0,
             left: 0,
             width: 'calc(100vw - (100vw - 100%))',
-            height: '100vh',
+            height: '100svh',
             backgroundColor: 'white',
-            zIndex: 1000
+            overflowY: 'scroll',
         }}>
-            <div id="modal" style={{
-
-            }}>
+            <div id="modal" className="ecfw-max-w-screen-lg ecfw-mx-auto">
                 <div id="topbar" className="ecfw-py-2 ecfw-px-4 ecfw-flex ecfw-justify-between">
                     <button 
                         className="ecfw-text-bg-primary hover:ecfw-text-bg-primary/90 ecfw-rounded-md ecfw-py-2 ecfw-h-10 "
@@ -127,10 +127,12 @@ export function Modal({
             </div>
 
                 </div>
-                <div id="content">
+                <div id="content"> 
+                    <Title value={title} setValue={setTitle} date={date} setDate={setDate}/>
                     <ProseMirrorEditor content={fileContent} />
                 </div>
             </div>
+
 
         </div>
     </>)

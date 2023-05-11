@@ -8,6 +8,7 @@ import {
   schema, defaultMarkdownParser,
   defaultMarkdownSerializer
 } from "prosemirror-markdown"
+import { Check, ChevronRight, Circle, Bold, Italic, CodeIcon, Link, Undo, Redo, ListOrdered, List, Quote, Outdent } from "lucide-react"
 
 export function CustomButton({
     onClick,
@@ -15,7 +16,8 @@ export function CustomButton({
 }){
     return <button
         onClick={onClick}
-        className="ecfw-bg-slate-600 hover:ecfw-bg-slate-700 ecfw-text-white ecfw-py-2 ecfw-px-4 ecfw-rounded"
+        className="ecfw-flex ecfw-cursor-pointer ecfw-select-none ecfw-items-center ecfw-rounded-sm ecfw-px-3 ecfw-py-1.5 ecfw-text-sm ecfw-font-medium ecfw-outline-none focus:ecfw-bg-accent focus:ecfw-text-accent-foreground data-[state=open]:ecfw-bg-accent data-[state=open]:ecfw-text-accent-foreground"
+        // className="ecfw-bg-slate-600 hover:ecfw-bg-slate-700 ecfw-text-white ecfw-py-2 ecfw-px-4 ecfw-rounded"
     >
         {children}
     </button>
@@ -28,7 +30,7 @@ export function BoldButton() {
     view.focus();
   });
 
-  return <CustomButton onClick={onClick}>Bold</CustomButton>;
+  return <CustomButton onClick={onClick}><Bold /></CustomButton>;
 }
 
 //italic button
@@ -39,7 +41,7 @@ export function ItalicButton(){
     view.focus();
   })
 
-  return <CustomButton onClick={onClick}>Italic</CustomButton>;
+  return <CustomButton onClick={onClick}><Italic /></CustomButton>;
 }
 
 //make code button
@@ -50,7 +52,7 @@ export function CodeButton(){
     view.focus();
   })
 
-  return <CustomButton onClick={onClick}>Code</CustomButton>;
+  return <CustomButton onClick={onClick}><CodeIcon /></CustomButton>;
 }
 
 //button for link
@@ -63,14 +65,18 @@ export function LinkButton(){
     view.focus();
   })
 
-  return <CustomButton onClick={onClick}>Link</CustomButton>;
+  return <CustomButton onClick={onClick}><Link /></CustomButton>;
 }
 
 export function HorizontalRuleButton(){
   const onClick = useEditorEventCallback((view) => {
     const hr = view.state.schema.nodes.horizontal_rule.create();
     const tr = view.state.tr.replaceSelectionWith(hr);
-    view.state.apply(tr);
+
+    view.dispatch(tr);
+    // tr();
+    view.focus();
+    // view.state.apply(tr);
   })
 
   return <CustomButton onClick={onClick}>HR</CustomButton>;
@@ -83,7 +89,7 @@ export function HeaderButton({level}){
     view.focus();
   })
 
-  return <CustomButton onClick={onClick}>H{level}</CustomButton>;
+  return <div onClick={onClick}>Heading {level}</div>;
 }
 
 export function CodeBlockButton(){
@@ -93,7 +99,7 @@ export function CodeBlockButton(){
     view.focus();
   });
 
-  return <CustomButton onClick={onClick}>Code block</CustomButton>;
+  return <div onClick={onClick}>Code block</div>;
 }
 
 export function UndoButton(){
@@ -102,7 +108,7 @@ export function UndoButton(){
     view.focus();
   })
 
-  return <CustomButton onClick={onClick}>Undo</CustomButton>;
+  return <CustomButton onClick={onClick}><Undo /></CustomButton>;
 }
 
 export function RedoButton(){
@@ -111,7 +117,7 @@ export function RedoButton(){
     view.focus();
   })
 
-  return <CustomButton onClick={onClick}>Redo</CustomButton>;
+  return <CustomButton onClick={onClick}><Redo /></CustomButton>;
 }
 
 export function BulletListButton(){
@@ -121,7 +127,7 @@ export function BulletListButton(){
     view.focus();
   })
 
-  return <CustomButton onClick={onClick}>Bullet List</CustomButton>;
+  return <CustomButton onClick={onClick}><List /></CustomButton>;
 }
 
 export function OrderedListButton(){
@@ -131,7 +137,7 @@ export function OrderedListButton(){
     view.focus();
   })
 
-  return <CustomButton onClick={onClick}>Ordered List</CustomButton>;
+  return <CustomButton onClick={onClick}><ListOrdered /></CustomButton>;
 }
 
 export function BlockquoteButton(){
@@ -141,7 +147,7 @@ export function BlockquoteButton(){
     view.focus();
   })
 
-  return <CustomButton onClick={onClick}>Blockquote</CustomButton>;
+  return <CustomButton onClick={onClick}><Quote /></CustomButton>;
 }
 
 export function LiftButton(){
@@ -151,5 +157,15 @@ export function LiftButton(){
     view.focus();
   })
 
-  return <CustomButton onClick={onClick}>Lift</CustomButton>;
+  return <CustomButton onClick={onClick}><Outdent /></CustomButton>;
+}
+
+export function ParagraphButton(){
+  const onClick = useEditorEventCallback((view) => {
+    const cmd = setBlockType(view.state.schema.nodes.paragraph);
+    cmd(view.state, view.dispatch, view);
+    view.focus();
+  })
+
+  return <div onClick={onClick}>Paragraph</div>;
 }
