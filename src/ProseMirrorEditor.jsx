@@ -7,14 +7,16 @@
 // TODO: [X] fix date & filename
 // TODO: [X] handle save, cancel, and delete, etc.
 // TODO: [X] handle publish
-// TODO: [ ] improve the editing experience
+// TODO: [X] improve the editing experience
   // TODO: [X] pressing enter in a bullet list should create a new bullet (same for numbers)
-  // TODO: [ ] show the buttons conditionally based on whether they can be acted upon
-  // TODO: [ ] switch the markdown and wysiwyg button
-// TODO: [ ] improvements to modal & editing
-  // TODO: [ ] saving modal to indicate progress of saving to github
-  // TODO: [ ] loading modal to indicate that we are pulling the assets
-  // TODO: [ ] fix image to avoid conflicts in repo (check before trying to save)
+  // TODO: [X] show the buttons conditionally based on whether they can be acted upon
+  // TODO: [X] switch the markdown and wysiwyg button
+// TODO: [X] improvements to modal & editing
+  // TODO: [X] saving modal to indicate progress of saving to github
+  // TODO: [X] loading modal to indicate that we are pulling the assets
+  // TODO: [X] fix image to avoid conflicts in repo (check before trying to save)
+  // TODO: [X] show confirmation when user deletes 
+  // TODO: [X] do not show confirmation when the user leaves but there have been no changes
 
 
 import { EditorState } from "prosemirror-state";
@@ -172,8 +174,7 @@ export function ProseMirrorEditor({
       }}
     >
       <div
-        className="sm:ecfw-relative
-        ecfw-w-full"
+        className="ecfw-w-full"
       >
 
         <div className="ecfw-overflow-auto ecfw-rounded-md

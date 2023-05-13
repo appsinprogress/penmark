@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useEditorEventCallback } from "@nytimes/react-prosemirror";
 import { ProseMirror } from "@nytimes/react-prosemirror";
 import { undo, redo, history } from "prosemirror-history"
-import { baseKeymap, toggleMark, setBlockType, wrapIn, lift } from "prosemirror-commands"
+import { baseKeymap, toggleMark, setBlockType, wrapIn, lift, canExecute } from "prosemirror-commands"
 import { wrapInList } from "prosemirror-schema-list"
 import {
   schema, defaultMarkdownParser,
@@ -10,54 +10,85 @@ import {
 } from "prosemirror-markdown"
 import { Check, ChevronRight, Circle, Bold, Italic, CodeIcon, Link, Undo, Redo, ListOrdered, List, Quote, Outdent, FileType, FileSignature, Image } from "lucide-react"
 import { splitListItem } from "prosemirror-schema-list";
+import { useEditorState } from "@nytimes/react-prosemirror";
+import { cn } from "./lib/utils"
+
 
 export function CustomButton({
-    onClick,
-    children
-}){
-    return <button
-        onClick={onClick}
-        className="ecfw-flex ecfw-cursor-pointer ecfw-select-none ecfw-items-center ecfw-rounded-sm ecfw-px-3 ecfw-py-1.5 ecfw-text-sm ecfw-font-medium ecfw-outline-none focus:ecfw-bg-accent focus:ecfw-text-accent-foreground data-[state=open]:ecfw-bg-accent data-[state=open]:ecfw-text-accent-foreground"
-        // className="ecfw-bg-slate-600 hover:ecfw-bg-slate-700 ecfw-text-white ecfw-py-2 ecfw-px-4 ecfw-rounded"
-    >
-        {children}
-    </button>
+  onClick,
+  children,
+  disabled = false,
+}) {
+  return <button
+    onClick={onClick}
+    className={
+      cn(
+        //conditionally apply transparency on disabled buttons
+        disabled ? "ecfw-opacity-30" : "",
+        "ecfw-flex ecfw-cursor-pointer ecfw-select-none ecfw-items-center ecfw-rounded-sm ecfw-px-3 ecfw-py-1.5 ecfw-text-sm ecfw-font-medium ecfw-outline-none focus:ecfw-bg-accent focus:ecfw-text-accent-foreground data-[state=open]:ecfw-bg-accent data-[state=open]:ecfw-text-accent-foreground"
+      )
+    }
+  >
+    {children}
+  </button>
 }
 
 export function BoldButton() {
+
+  const editorState = useEditorState();
+  const toggleBoldMarkCmd = toggleMark(schema.marks.strong);
+  const canExecuteCommand = toggleBoldMarkCmd(editorState)
+
   const onClick = useEditorEventCallback((view) => {
-    const toggleBoldMark = toggleMark(view.state.schema.marks.strong);
-    toggleBoldMark(view.state, view.dispatch, view);
+    toggleBoldMarkCmd(view.state, view.dispatch, view);
     view.focus();
   });
 
-  return <CustomButton onClick={onClick}><Bold /></CustomButton>;
+  return <CustomButton onClick={onClick} disabled={!canExecuteCommand}>
+    <Bold />
+  </CustomButton>;
 }
 
 //italic button
-export function ItalicButton(){
-  const onClick = useEditorEventCallback((view) => {
-    const toggleItalicMark = toggleMark(view.state.schema.marks.em);
-    toggleItalicMark(view.state, view.dispatch, view);
-    view.focus();
-  })
+export function ItalicButton() {
+  const editorState = useEditorState();
+  const toggleItalicMarkCmd = toggleMark(schema.marks.em);
+  const canExecuteCommand = toggleItalicMarkCmd(editorState)
 
-  return <CustomButton onClick={onClick}><Italic /></CustomButton>;
+  const onClick = useEditorEventCallback((view) => {
+    toggleItalicMarkCmd(view.state, view.dispatch, view);
+    view.focus();
+  });
+
+  return <CustomButton onClick={onClick} disabled={!canExecuteCommand}>
+    <Italic />
+
+  </CustomButton>;
 }
 
 //make code button
-export function CodeButton(){
-  const onClick = useEditorEventCallback((view) => {
-    const toggleCodeMark = toggleMark(view.state.schema.marks.code);
-    toggleCodeMark(view.state, view.dispatch, view);
-    view.focus();
-  })
+export function CodeButton() {
+  const editorState = useEditorState();
+  const toggleCodeMarkCmd = toggleMark(schema.marks.code);
+  const canExecuteCommand = toggleCodeMarkCmd(editorState)
 
-  return <CustomButton onClick={onClick}><CodeIcon /></CustomButton>;
+  const onClick = useEditorEventCallback((view) => {
+    toggleCodeMarkCmd(view.state, view.dispatch, view);
+    view.focus();
+  });
+
+  return <CustomButton onClick={onClick} disabled={!canExecuteCommand}>
+    <CodeIcon />
+  </CustomButton>;
 }
 
 //button for link
-export function LinkButton(){
+export function LinkButton() {
+
+  const editorState = useEditorState();
+  const toggleLinkMarkCmd = toggleMark(schema.marks.link);
+  const canExecuteCommand = toggleLinkMarkCmd(editorState)
+
   const onClick = useEditorEventCallback((view) => {
     const link = prompt("Enter the link URL");
     if (!link) return;
@@ -66,128 +97,185 @@ export function LinkButton(){
     view.focus();
   })
 
-  return <CustomButton onClick={onClick}><Link /></CustomButton>;
+  return <CustomButton onClick={onClick} disabled={!canExecuteCommand}>
+    <Link />
+
+  </CustomButton>;
 }
 
-export function HorizontalRuleButton(){
+export function HorizontalRuleButton() {
+
   const onClick = useEditorEventCallback((view) => {
     const hr = view.state.schema.nodes.horizontal_rule.create();
     const tr = view.state.tr.replaceSelectionWith(hr);
 
     view.dispatch(tr);
-    // tr();
     view.focus();
-    // view.state.apply(tr);
   })
 
   return <CustomButton onClick={onClick}>HR</CustomButton>;
 }
 
-export function HeaderButton({level}){
-  const onClick = useEditorEventCallback((view) => {
-    console.log("HeaderButton level", level)
+export function HeaderButton({ level }) {
 
-    const setHeaderCmd = setBlockType(view.state.schema.nodes.heading, { level });
+  const editorState = useEditorState();
+  const setHeaderCmd = setBlockType(schema.nodes.heading, { level });
+  const canExecuteCommand = setHeaderCmd(editorState)
+
+  const onClick = useEditorEventCallback((view) => {
     setHeaderCmd(view.state, view.dispatch, view);
     view.focus();
   })
 
-  return <div onClick={onClick}>Heading {level}</div>;
+  return <div onClick={onClick}
+    className={canExecuteCommand ? '' : 'ecfw-opacity-30'}
+  >Heading {level}</div>;
 }
 
-export function CodeBlockButton(){
+export function CodeBlockButton() {
+
+  const editorState = useEditorState();
+  const setCodeBlockCmd = setBlockType(schema.nodes.code_block);
+  const canExecuteCommand = setCodeBlockCmd(editorState)
+
   const onClick = useEditorEventCallback((view) => {
-    console.log("logging code block")
-    const setCodeBlockCmd = setBlockType(view.state.schema.nodes.code_block);
     setCodeBlockCmd(view.state, view.dispatch, view);
     view.focus();
   });
 
-  return <div onClick={onClick}>Code block</div>;
+  return <div onClick={onClick}
+    className={canExecuteCommand ? '' : 'ecfw-opacity-30'}
+  >
+    Code block
+
+  </div>;
 }
 
-export function UndoButton(){
+export function UndoButton() {
+
+  const editorState = useEditorState();
+  const canExecuteCommand = undo(editorState)
+
   const onClick = useEditorEventCallback((view) => {
     undo(view.state, view.dispatch, view);
     view.focus();
   })
 
-  return <CustomButton onClick={onClick}><Undo /></CustomButton>;
+  return <CustomButton onClick={onClick} disabled={!canExecuteCommand}>
+    <Undo />
+  </CustomButton>;
 }
 
-export function RedoButton(){
+export function RedoButton() {
+
+  const editorState = useEditorState();
+  const canExecuteCommand = redo(editorState)
+
   const onClick = useEditorEventCallback((view) => {
     redo(view.state, view.dispatch, view);
     view.focus();
   })
 
-  return <CustomButton onClick={onClick}><Redo /></CustomButton>;
+  return <CustomButton onClick={onClick} disabled={!canExecuteCommand}>
+    <Redo />
+  </CustomButton>;
 }
 
-export function BulletListButton(){
+export function BulletListButton() {
+
+  const editorState = useEditorState();
+  const wrapInBulletListCmd = wrapInList(schema.nodes.bullet_list, {
+    tight: true,
+  });
+  const canExecuteCommand = wrapInBulletListCmd(editorState)
+
   const onClick = useEditorEventCallback((view) => {
-    const cmd = wrapInList(view.state.schema.nodes.bullet_list, {
-      tight: true,
-    });
-    cmd(view.state, view.dispatch, view);
+    wrapInBulletListCmd(view.state, view.dispatch, view);
     view.focus();
   })
 
-  return <CustomButton onClick={onClick}><List /></CustomButton>;
+  return <CustomButton onClick={onClick} disabled={!canExecuteCommand}><List />
+
+  </CustomButton>;
 }
 
-export function OrderedListButton(){
+export function OrderedListButton() {
+
+  const editorState = useEditorState();
+  const wrapInOrderedListCmd = wrapInList(schema.nodes.ordered_list, {
+    tight: true,
+  });
+  const canExecuteCommand = wrapInOrderedListCmd(editorState)
+
   const onClick = useEditorEventCallback((view) => {
-    const cmd = wrapInList(view.state.schema.nodes.ordered_list, {
-      tight: true,
-    });
-    cmd(view.state, view.dispatch, view);
+    wrapInOrderedListCmd(view.state, view.dispatch, view);
     view.focus();
   })
 
-  return <CustomButton onClick={onClick}><ListOrdered /></CustomButton>;
+  return <CustomButton onClick={onClick} disabled={!canExecuteCommand}><ListOrdered />
+
+  </CustomButton>;
 }
 
-export function BlockquoteButton(){
+export function BlockquoteButton() {
+
+  const editorState = useEditorState();
+  const wrapInBlockquoteCmd = wrapInList(schema.nodes.blockquote);
+  const canExecuteCommand = wrapInBlockquoteCmd(editorState)
+
   const onClick = useEditorEventCallback((view) => {
-    const cmd = wrapInList(view.state.schema.nodes.blockquote);
-    cmd(view.state, view.dispatch, view);
+    wrapInBlockquoteCmd(view.state, view.dispatch, view);
     view.focus();
   })
 
-  return <CustomButton onClick={onClick}><Quote /></CustomButton>;
+  return <CustomButton onClick={onClick} disabled={!canExecuteCommand}><Quote />
+
+  </CustomButton>;
 }
 
-export function LiftButton(){
+export function LiftButton() {
+
+  const editorState = useEditorState();
+  const canExecuteCommand = lift(editorState)
+
   const onClick = useEditorEventCallback((view) => {
-    const cmd = lift;
-    cmd(view.state, view.dispatch, view);
+    lift(view.state, view.dispatch, view);
     view.focus();
   })
 
-  return <CustomButton onClick={onClick}><Outdent /></CustomButton>;
+  return <CustomButton onClick={onClick} disabled={!canExecuteCommand}><Outdent />
+
+  </CustomButton>;
 }
 
-export function ParagraphButton(){
+export function ParagraphButton() {
+
+  const editorState = useEditorState();
+  const setParagraphCmd = setBlockType(schema.nodes.paragraph);
+  const canExecuteCommand = setParagraphCmd(editorState)
+
   const onClick = useEditorEventCallback((view) => {
-    const cmd = setBlockType(view.state.schema.nodes.paragraph);
-    cmd(view.state, view.dispatch, view);
+    setParagraphCmd(view.state, view.dispatch, view);
     view.focus();
   })
 
-  return <div onClick={onClick}>Paragraph</div>;
+  return <div onClick={onClick}
+    className={canExecuteCommand ? '' : 'ecfw-opacity-30'}
+  >Paragraph
+
+  </div>;
 }
 
 export function MarkdownToggleButton({
   isMarkdown,
   setIsMarkdown
-}){
+}) {
   const onClick = ((view) => {
     setIsMarkdown(!isMarkdown)
     view.focus();
   }, [])
 
-  return <button 
+  return <button
     onClick={() => setIsMarkdown(!isMarkdown)}
     className='ecfw-ml-2 ecfw-bg-transparent ecfw-outline-none ecfw-text-md ecfw-font-semibold  ecfw-p-2
       ecfw-border-slate-300 ecfw-border ecfw-rounded-lg
@@ -195,35 +283,35 @@ export function MarkdownToggleButton({
   >
     {
       isMarkdown ?
-        <FileType />
-        :
         <FileSignature />
+        :
+        <FileType />
     }
   </button>
 }
 
-export function InsertImage(view){
-    //select image from file system
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.onchange = () => {
-      if (!input.files) return;
-      const file = input.files[0];
+export function InsertImage(view) {
+  //select image from file system
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.onchange = () => {
+    if (!input.files) return;
+    const file = input.files[0];
 
-      //create a blob url for the image
-      const src = URL.createObjectURL(file);
+    //create a blob url for the image
+    const src = URL.createObjectURL(file);
 
-      //insert the image into the editor
-      const node = view.state.schema.nodes.image.create({
-        src,
-        title: file.name
-      });
-      const transaction = view.state.tr.replaceSelectionWith(node);
-      view.dispatch(transaction);
-      view.focus();
-    };
-    input.click();
+    //insert the image into the editor
+    const node = view.state.schema.nodes.image.create({
+      src,
+      title: file.name
+    });
+    const transaction = view.state.tr.replaceSelectionWith(node);
+    view.dispatch(transaction);
+    view.focus();
+  };
+  input.click();
 }
 
 export function base64ToBlobUrl(base64String, contentType) {
@@ -249,7 +337,7 @@ export function base64ToBlobUrl(base64String, contentType) {
 }
 
 //function for image insert button
-export function ImageInsertButton(){
+export function ImageInsertButton() {
   const onClick = useEditorEventCallback((view) => {
     InsertImage(view);
   })
