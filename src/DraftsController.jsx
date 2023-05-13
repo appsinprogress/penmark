@@ -8,17 +8,19 @@ import "./Modal.jsx";
 import React, { useEffect, useState } from "react";
 import { createRoot } from 'react-dom/client';
 import { Modal } from "./Modal2.jsx";
+import { decodeFilename } from "./helpers/filenameEncoding.jsx";
 
 var accessToken;
 
 function DraftLine({draft, showModal, setShowModalBoolean, setEditingDraft}) {
+
+    const title = decodeFilename(draft.name).articleTitle;
+
     return (
       <div
         id={draft.name}
         className="draft-element"
         onClick={() => {
-        //   const draftContainer = document.getElementById("cms-drafts");
-        //   showModal(draft, draftContainer);
             setShowModalBoolean(true);
             setEditingDraft(draft);
         }}
@@ -28,7 +30,7 @@ function DraftLine({draft, showModal, setShowModalBoolean, setEditingDraft}) {
             className="fa fa-file-text"
             style={{ paddingRight: 6, color: "#2e2e2e" }}
           ></i>
-          <div className="draft-element--file">{draft.name}</div>
+          <div className="draft-element--file">{title}</div>
         </div>
       </div>
     );
@@ -70,7 +72,13 @@ function DraftsComponent() {
             }
         });
 
+        //keep only the files with .md file extension to filter out images
+        response.data = response.data.filter((file) => {
+            return file.name.endsWith(".md");
+        })
+
         setDrafts(response.data);
+        console.log(response.data)
         setDraftsLoaded(true);
     }
 
@@ -116,8 +124,11 @@ function DraftsComponent() {
           </div>
         </div>
         <div className="button-container" id="create-draft" onClick={()=>{
-            const draftContainer = document.getElementById("cms-drafts");
-            showModal(null, draftContainer);
+            // const draftContainer = document.getElementById("cms-drafts");
+            // showModal(null, draftContainer);
+            setShowModalBoolean(true);
+            setEditingDraft(null);
+
         }}>
           <i
             className="fa fa-pencil-square-o"
@@ -144,7 +155,12 @@ function DraftsComponent() {
         </div>
       }
         {
-            showModalBoolean ? <Modal setShowModalBoolean={setShowModalBoolean} draft={editingDraft}/> : null
+            showModalBoolean ? <Modal 
+                setShowModalBoolean={setShowModalBoolean} 
+                draft={editingDraft} 
+                loadDrafts={loadDrafts}
+                
+                /> : null
         }
     </div>
     );
