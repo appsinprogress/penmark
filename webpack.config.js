@@ -8,7 +8,7 @@ module.exports = {
         PostClient: './src/PostClient.jsx',
         Modal: './src/Modal.jsx',
         prosemirror: './src/prosemirror.js',
-        Title: './src/components/Title.jsx'
+        Title: './src/components/Title.jsx',
     },
     performance: {
         hints: false
@@ -55,6 +55,15 @@ module.exports = {
             __JS_PACKAGE_HOST__: JSON.stringify("http://10.0.0.169:9000") //for local development with host 0.0.0.0
             // __JS_PACKAGE_HOST__: JSON.stringify("http://localhost:9000") //for local development
             // __JS_PACKAGE_HOST__: JSON.stringify("https://cdn.jsdelivr.net/npm/edit-blog-from-site@0.0.12/dist") //for production
-        })
-    ]
+        }),
+        new webpack.ProvidePlugin({
+            Buffer: ['buffer', 'Buffer'],
+        }),
+    ],
+    resolve: {
+        extensions: [ '.ts', '.js', '.jsx'],
+        fallback: {
+            "buffer": require.resolve("buffer")
+        }
+    },
 };

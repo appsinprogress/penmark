@@ -36,14 +36,7 @@ try{
             }
         </style>
 
-        <div>
-            <div id="cms-buttons">
-                <button id="edit-button" class="blog-cms--button-outline">
-                    <i class="fa fa-pencil-square-o" style="padding-right: 4px;"></i>Edit
-                </button>
-            </div> 
-            <div id="modalParent">
-            </div>
+        <div id="react">
         </div>
     `);
 

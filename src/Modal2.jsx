@@ -45,12 +45,37 @@ export function Modal({
     useEffect(() => {
         console.log(draft)
 
-        const fetchData = async () => {
-            await loadFileContent();
-        };
-        fetchData();
+        if(draft){
+            const fetchData = async () => {
+                await loadFileContent();
+            };
+            fetchData();
+        }
+        //if no draft, fetch the template file from the repo
+        else{
+            const fetchData = async () => {
+                await loadTemplate();
+            }
+            fetchData();
+        }
+
     }, [draft]);
 
+    //async function to fetch default template file from github
+    async function loadTemplate(){
+        const response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
+            owner: 'thomasgauvin',
+            repo: 'blog',
+            path: '_drafts/template.md',
+        });
+
+        const fileContent = Base64.decode(response.data.content);
+        setFileContent(fileContent);
+
+        //set filecontentref
+        fileContentRef.current = fileContent;
+        setOriginalFileContentWithImagesReplacedWithBlobs(fileContent);
+    }
 
     async function loadFileContent() {
         setIsLoading(true);
@@ -392,6 +417,13 @@ export function Modal({
             }
         }
         else{
+            if(!title){
+                alert('Please enter a title')
+                
+                setIsSavingToGithub(false);
+                
+                return;
+            }
             console.log("Saving new file")
             //save the draft with a new name
             const message = skipCi? `create draft [skip ci]` : `create draft`
@@ -517,7 +549,7 @@ export function Modal({
                             className="ecfw-flex ecfw-relative"
                         >
                             <button id="dropdownDefaultButton"
-                                onClick={() => saveDraft()}
+                                onClick={() => saveDraft(null, null, true)}
                                 data-dropdown-toggle="dropdown"
                                 className="ecfw-pr-16 ecfw-flex ecfw-h-10 ecfw-rounded-l-md ecfw-py-2 ecfw-px-4 ecfw-bg-primary ecfw-text-primary-foreground hover:ecfw-bg-primary/90"
                                 type="button">

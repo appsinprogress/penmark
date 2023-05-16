@@ -3,7 +3,7 @@
 // TODO: [X] fix some keymaps to buttons (like bold, italic, etc)
 // TODO: [X] HR not being inserted
 // TODO: [X] styling for lists & others
-// TODO: [X] image insertion :(
+// TODO: [X] image insertion
 // TODO: [X] fix date & filename
 // TODO: [X] handle save, cancel, and delete, etc.
 // TODO: [X] handle publish
@@ -17,7 +17,19 @@
   // TODO: [X] fix image to avoid conflicts in repo (check before trying to save)
   // TODO: [X] show confirmation when user deletes 
   // TODO: [X] do not show confirmation when the user leaves but there have been no changes
+// TODO: [X] handle back for new posts
+// TODO: [X] hijack the backbutton
+// TODO: [X] templates (for jekyll for instance)
+// TODO: [X] investigate why publish is not working
+// TODO: [ ] add to edit existing drafts
 
+// TODO: [ ] cleanup & testing
+// TODO: [ ] deploy & package the npm package
+// TODO: [ ] create repos & landing page
+
+// TODO: [ ] Post launch
+  // TODO: [ ] Add react router to load the modal to handle back and forward with proper navigation history
+  // TODO: [ ] improve 
 
 import { EditorState } from "prosemirror-state";
 // import { schema } from "prosemirror-schema-basic";

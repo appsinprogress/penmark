@@ -43,6 +43,39 @@ function DraftsComponent() {
     const [showModalBoolean, setShowModalBoolean] = useState(false);
     const [editingDraft, setEditingDraft] = useState(null);
 
+    //function that sets show modal boolean and sets the height of the body to 100vh when toggled
+    //and removes it 
+    function setShowModalWithBodyHeightAdjusted(){
+        const newIsModalOpen = !showModalBoolean;
+        setShowModalBoolean(newIsModalOpen);
+
+        if(newIsModalOpen){
+            //adjust height
+            document.body.style.height = "100vh";
+            document.body.style.overflow = "hidden";
+
+            //add editor path to the navigation history
+            history.pushState({page: "editor"}, "editor", "/editor");
+
+            //set back button to close the modal
+            window.onpopstate = function(event) {
+                setShowModalBoolean(false);
+
+                //adjust height
+                document.body.style.height = "auto";
+                document.body.style.overflow = "auto";
+            }
+        }
+        else{
+            //adjust height
+            document.body.style.height = "auto";
+            document.body.style.overflow = "auto";
+
+            //remove editor path from the navigation history
+            history.back();
+        } 
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             await loadDrafts();
@@ -74,7 +107,7 @@ function DraftsComponent() {
 
         //keep only the files with .md file extension to filter out images
         response.data = response.data.filter((file) => {
-            return file.name.endsWith(".md");
+            return file.name.endsWith(".md") && file.name !== "template.md";
         })
 
         setDrafts(response.data);
@@ -126,7 +159,7 @@ function DraftsComponent() {
         <div className="button-container" id="create-draft" onClick={()=>{
             // const draftContainer = document.getElementById("cms-drafts");
             // showModal(null, draftContainer);
-            setShowModalBoolean(true);
+            setShowModalWithBodyHeightAdjusted(true);
             setEditingDraft(null);
 
         }}>
@@ -144,7 +177,7 @@ function DraftsComponent() {
                 <DraftLine 
                     showModal={showModal} 
                     draft={draft} 
-                    setShowModalBoolean={setShowModalBoolean}
+                    setShowModalBoolean={setShowModalWithBodyHeightAdjusted}
                     setEditingDraft={setEditingDraft}    
                 />
             </>)}
@@ -156,7 +189,7 @@ function DraftsComponent() {
       }
         {
             showModalBoolean ? <Modal 
-                setShowModalBoolean={setShowModalBoolean} 
+                setShowModalBoolean={setShowModalWithBodyHeightAdjusted} 
                 draft={editingDraft} 
                 loadDrafts={loadDrafts}
                 
