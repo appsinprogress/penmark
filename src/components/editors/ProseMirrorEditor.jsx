@@ -21,11 +21,16 @@
 // TODO: [X] hijack the backbutton
 // TODO: [X] templates (for jekyll for instance)
 // TODO: [X] investigate why publish is not working
-// TODO: [ ] add to edit existing drafts
+// TODO: [X] add to edit existing drafts
 
-// TODO: [ ] cleanup & testing
+// TODO: [X] cleanup
 // TODO: [ ] deploy & package the npm package
+
+// TODO: [ ] testing
+// TODO: [ ] parametrize and make usable by all
 // TODO: [ ] create repos & landing page
+
+
 
 // TODO: [ ] Post launch
 // TODO: [ ] Add react router to load the modal to handle back and forward with proper navigation history

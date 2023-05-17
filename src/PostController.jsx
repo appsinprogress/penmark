@@ -3,6 +3,7 @@ import { getAccessToken } from "./helpers/userAccessHelpers.js";
 import React, { useState, useEffect } from "react";
 import { createRoot } from 'react-dom/client';
 import { Modal } from "./components/Modal.jsx";
+import { setBodyToFixedHeight, addEditorToNavigationHistoryWithBackHandler } from "./helpers/windowHelpers.js";
 
 var postFilePathInGithub;
 var accessToken;
@@ -11,28 +12,13 @@ function EditPostComponent(){
   const [showModalBoolean, setShowModalBoolean] = useState(false);
   const [editingDraft, setEditingDraft] = useState(null);
 
-  console.log(postFilePathInGithub)
-
   function handleEdit(){
     setShowModalBoolean(true);
-
-    //adjust height
-    document.body.style.height = "100vh";
-    document.body.style.overflow = "hidden";
-
-    //add editor path to the navigation history
-    history.pushState({page: "editor"}, "editor", "/editor");
-
-    //set back button to close the modal
-    window.onpopstate = function(event) {
-        setShowModalBoolean(false);
-
-        //adjust height
-        document.body.style.height = "auto";
-        document.body.style.overflow = "auto";
-    }
+    setBodyToFixedHeight();
+    addEditorToNavigationHistoryWithBackHandler(setShowModalBoolean);
   }
 
+  //load post on mount
   useEffect(() => {
       const fetchData = async () => {
           await loadPost();
@@ -56,7 +42,6 @@ function EditPostComponent(){
     setEditingDraft(response.data);
   }
 
-
   //function that sets show modal boolean and sets the height of the body to 100vh when toggled
   //and removes it 
   function setShowModalWithBodyHeightAdjusted(){
@@ -64,21 +49,8 @@ function EditPostComponent(){
     setShowModalBoolean(newIsModalOpen);
 
     if(newIsModalOpen){
-        //adjust height
-        document.body.style.height = "100vh";
-        document.body.style.overflow = "hidden";
-
-        //add editor path to the navigation history
-        history.pushState({page: "editor"}, "editor", "/editor");
-
-        //set back button to close the modal
-        window.onpopstate = function(event) {
-            setShowModalBoolean(false);
-
-            //adjust height
-            document.body.style.height = "auto";
-            document.body.style.overflow = "auto";
-        }
+        setBodyToFixedHeight();
+        addEditorToNavigationHistoryWithBackHandler();
     }
     else{
         //adjust height
@@ -115,12 +87,8 @@ function EditPostComponent(){
   )
 }
 
-function setupReact(){
-  const root = createRoot(document.getElementById('react'));
-  root.render(<EditPostComponent />);
-}
-
 export async function initPostEditor(postFilePath){
+  console.log(postFilePath)
   postFilePathInGithub = postFilePath;
 
   accessToken = await getAccessToken();
@@ -129,4 +97,7 @@ export async function initPostEditor(postFilePath){
   setupReact();
 }
 
-
+function setupReact(){
+  const root = createRoot(document.getElementById('react'));
+  root.render(<EditPostComponent />);
+}
