@@ -93,6 +93,8 @@ export function ProseMirrorEditor({
     })
   );
 
+  const { windowHeight, visualViewportHeight, virtualKeyboardSupported } = useWindowDimensions();
+
   //when the value of the editor changes, update the content ref (ref prevents rerendering)
   //content ref value is used to update the content in the parent component (used to pass the content to markdown editor)
   useEffect(() => {
@@ -173,6 +175,10 @@ export function ProseMirrorEditor({
     >
       <div
         className="ecfw-w-full"
+        style={virtualKeyboardSupported ?{
+          position: 'fixed',
+          bottom: windowHeight - visualViewportHeight,
+        } : {}}
       >
         <div className="ecfw-overflow-auto ecfw-rounded-md
           ecfw-border-slate-300 ecfw-border ecfw-m-4">
@@ -213,9 +219,38 @@ export function ProseMirrorEditor({
 
       <div ref={setMount} className="ecfw-prosemirror ecfw-h-full ecfw-m-4 ecfw-outline-none"
         style={{
-          minHeight: '70vh'
+          minHeight: '70vh',
+          paddingBottom: virtualKeyboardSupported ? windowHeight - visualViewportHeight + 100 : 0,
         }} />
     </ProseMirror>
   );
 }
 
+
+const useWindowDimensions = () => {
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+  const [visualViewportHeight, setVisualViewportHeight] = useState(window.visualViewport.height);
+
+  const handleResize = () => {
+    setWindowHeight(window.innerHeight);
+    setVisualViewportHeight(window.visualViewport.height);
+  };
+
+  let virtualKeyboardSupported = false;
+
+  if ('virtualKeyboard' in navigator) {
+
+    virtualKeyboardSupported = true;
+    navigator.virtualKeyboard.overlaysContent = true;
+  }
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  return { windowHeight, visualViewportHeight, virtualKeyboardSupported };
+};
