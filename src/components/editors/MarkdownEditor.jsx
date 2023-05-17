@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
 export const MarkdownEditor = ({
-    content,
-    setContent,
+  content,
+  setContent,
 }) => {
 
   const handleTextChange = (event) => {
@@ -15,17 +15,17 @@ export const MarkdownEditor = ({
 
   return (
     <div>
-        <textarea
-            value={content}
-            onChange={handleTextChange}
-            rows={amountOfRows}
-            cols={50}
-            style={{
-                width: '100%',
-                minHeight: '100lvh'
-            }}
-            className='ecfw-p-4'
-        />
+      <textarea
+        value={content}
+        onChange={handleTextChange}
+        rows={amountOfRows}
+        cols={50}
+        style={{
+          width: '100%',
+          minHeight: '100lvh'
+        }}
+        className='ecfw-p-4'
+      />
     </div>
   );
 };

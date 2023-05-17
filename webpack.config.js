@@ -6,9 +6,6 @@ module.exports = {
         DraftsClient: './src/DraftsClient.jsx',
         LoginClient: './src/LoginClient.jsx',
         PostClient: './src/PostClient.jsx',
-        Modal: './src/Modal.jsx',
-        prosemirror: './src/prosemirror.js',
-        Title: './src/components/Title.jsx',
     },
     performance: {
         hints: false

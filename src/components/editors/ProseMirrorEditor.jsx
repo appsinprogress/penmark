@@ -8,15 +8,15 @@
 // TODO: [X] handle save, cancel, and delete, etc.
 // TODO: [X] handle publish
 // TODO: [X] improve the editing experience
-  // TODO: [X] pressing enter in a bullet list should create a new bullet (same for numbers)
-  // TODO: [X] show the buttons conditionally based on whether they can be acted upon
-  // TODO: [X] switch the markdown and wysiwyg button
+// TODO: [X] pressing enter in a bullet list should create a new bullet (same for numbers)
+// TODO: [X] show the buttons conditionally based on whether they can be acted upon
+// TODO: [X] switch the markdown and wysiwyg button
 // TODO: [X] improvements to modal & editing
-  // TODO: [X] saving modal to indicate progress of saving to github
-  // TODO: [X] loading modal to indicate that we are pulling the assets
-  // TODO: [X] fix image to avoid conflicts in repo (check before trying to save)
-  // TODO: [X] show confirmation when user deletes 
-  // TODO: [X] do not show confirmation when the user leaves but there have been no changes
+// TODO: [X] saving modal to indicate progress of saving to github
+// TODO: [X] loading modal to indicate that we are pulling the assets
+// TODO: [X] fix image to avoid conflicts in repo (check before trying to save)
+// TODO: [X] show confirmation when user deletes 
+// TODO: [X] do not show confirmation when the user leaves but there have been no changes
 // TODO: [X] handle back for new posts
 // TODO: [X] hijack the backbutton
 // TODO: [X] templates (for jekyll for instance)
@@ -28,114 +28,94 @@
 // TODO: [ ] create repos & landing page
 
 // TODO: [ ] Post launch
-  // TODO: [ ] Add react router to load the modal to handle back and forward with proper navigation history
-  // TODO: [ ] improve 
+// TODO: [ ] Add react router to load the modal to handle back and forward with proper navigation history
+// TODO: [ ] improve 
 
 import { EditorState } from "prosemirror-state";
-// import { schema } from "prosemirror-schema-basic";
 import { splitListItem } from "prosemirror-schema-list";
 import React, { useEffect, useState } from "react";
 import { ProseMirror } from "@nytimes/react-prosemirror";
-import { BoldButton, ItalicButton, ImageInsertButton, CodeButton, LinkButton, HorizontalRuleButton, HeaderButton,
-    CodeBlockButton, UndoButton, RedoButton, BulletListButton, OrderedListButton, 
-    BlockquoteButton, LiftButton, ParagraphButton, InsertImage, base64ToBlobUrl } from "./CustomButtons.jsx";
-import { schema, defaultMarkdownParser, defaultMarkdownSerializer, MarkdownSerializerState } from "prosemirror-markdown"
+import {
+  BoldButton, ItalicButton, ImageInsertButton, CodeButton, LinkButton, HorizontalRuleButton, HeaderButton,
+  CodeBlockButton, UndoButton, RedoButton, BulletListButton, OrderedListButton,
+  BlockquoteButton, LiftButton, ParagraphButton
+} from "../buttons/CustomEditorButtons.jsx";
+import { schema, defaultMarkdownParser, defaultMarkdownSerializer } from "prosemirror-markdown"
 import { undo, redo, history } from "prosemirror-history"
 import { keymap } from "prosemirror-keymap"
-import { baseKeymap, toggleMark, setBlockType, wrapIn, lift, chainCommands } from "prosemirror-commands"
+import { baseKeymap } from "prosemirror-commands"
 import { dropCursor } from "prosemirror-dropcursor"
 import { gapCursor } from "prosemirror-gapcursor"
 import { buildKeymap } from "prosemirror-example-setup";
-import { useWindowDimensions } from "./hooks/useWindowDimensions.jsx";
 import {
   Menubar,
   MenubarContent,
   MenubarItem,
   MenubarMenu,
-  MenubarSeparator,
-  MenubarShortcut,
   MenubarTrigger,
   MenubarSub,
   MenubarSubTrigger,
   MenubarSubContent,
-} from "./components/ui/MenuBar.jsx"
+} from "../../lib/ui/MenuBar.jsx"
+import { base64ToBlobUrl } from "../../helpers/imageParsingHelpers.js";
 
-const customKeymaps2 = {
+const defaultMarkdownKeymap = buildKeymap(schema, {});
+const customKeymap = {
   "Enter": splitListItem(schema.nodes.list_item),
 }
 
-const customKeymaps = buildKeymap(schema, {});
-
 const plugins = [
   history(),
-  keymap(customKeymaps2),
-  keymap(customKeymaps),
+  keymap(customKeymap),
+  keymap(defaultMarkdownKeymap),
   keymap(baseKeymap),
   dropCursor(),
   gapCursor(),
 ]
 
-// //create a serializer with tight lists
-// const serializer = defaultMarkdownSerializer.configure({
-//   tightLists: true
-// })
-
-// const serializer = defaultMarkdownSerializer.from(serializerState);
-
 export function ProseMirrorEditor({
-    content,
-    setContentRefValue//need to avoid rerenders for prosemirror
+  content,
+  setContentRefValue//need to avoid rerenders for prosemirror
 }) {
   const [mount, setMount] = useState();
   const [editorState, setEditorState] = useState(
     EditorState.create({
-        schema: schema,
-        plugins: plugins,
-        doc: defaultMarkdownParser.parse(content, {
-          tightLists: true
-        })
+      schema: schema,
+      plugins: plugins,
+      doc: defaultMarkdownParser.parse(content, {
+        tightLists: true
       })
-    );
+    })
+  );
 
-  // //create value for Virtual Viewport
-  // const { width, height, visualViewportHeight, visualViewportWidth } = useWindowDimensions();
-  
-  // useEffect(() => { console.log(height, visualViewportHeight ) }, [height, visualViewportHeight]);
-
+  //when the value of the editor changes, update the content ref (ref prevents rerendering)
+  //content ref value is used to update the content in the parent component (used to pass the content to markdown editor)
   useEffect(() => {
-    console.log('updated the value of the text')
-    if(mount){
+    if (mount) {
       //set content ref value to a markdown serializer with tightlists
-
       const serializedValue = defaultMarkdownSerializer.serialize(editorState.doc, {
         tightLists: true
       })
-
-      console.log(serializedValue)
 
       setContentRefValue(serializedValue)
     }
   }, [mount, editorState, setContentRefValue])
 
+  //when the component mounts or the content changes, update the editor state
   useEffect(() => {
-    if(mount){
-        setEditorState(EditorState.create({
-            schema: schema,
-            plugins: plugins,
-            doc: defaultMarkdownParser.parse(content)
-        }))
+    if (mount) {
+      setEditorState(EditorState.create({
+        schema: schema,
+        plugins: plugins,
+        doc: defaultMarkdownParser.parse(content)
+      }))
     }
   }, [mount, content]);
 
-  console.log(content)
-
-  console.log('rendering')
-
-
-  const isImagePasted = (transaction) => {
+  function isImagePasted(transaction) {
     for (let i = 0; i < transaction.steps.length; i++) {
       const step = transaction.steps[i];
-      
+
       if (step.slice) {
         // Check if the slice's content is a Fragment
         const content = step.slice.content.content;
@@ -145,8 +125,8 @@ export function ProseMirrorEditor({
           //iterate through nodes and return the value of the content
           let hasImage = false;
           let nodeToReturn = null;
-          for(let node of nodes){
-            if(node.type.name === 'image' && node.attrs.src.startsWith('data')){
+          for (let node of nodes) {
+            if (node.type.name === 'image' && node.attrs.src.startsWith('data')) {
               hasImage = true;
               nodeToReturn = node;
               break
@@ -159,40 +139,38 @@ export function ProseMirrorEditor({
         }
       }
     }
-    return [false, ]; // No image paste detected
+    return [false,]; // No image paste detected
   };
+
+  function handleDispatchTransaction(tr) {
+    const [hasImage, node] = isImagePasted(tr);
+    if (hasImage) { 
+      //when an image is pasted into the text editor, prosemirror converts the image to base64
+      //to properly handle this image as a separate file, we convert the base64 to a blob url
+      //we must then replace the base64 references with the blob url
+      const url = base64ToBlobUrl(node.attrs.src.split(',')[1]);
+
+      //insert image by changing the node.attrs.src to the blob url
+      tr.steps[0].slice.content.content[0].attrs.src = url;
+      setEditorState((s) => s.apply(tr));
+    }
+    else {
+      setEditorState((s) => s.apply(tr));
+
+    }
+  }
 
   return (
     <ProseMirror
       mount={mount}
       state={editorState}
-      dispatchTransaction={(tr) => {
-        const [hasImage, node] = isImagePasted(tr);
-        if(hasImage){
-          console.log('image pasted')
-          console.log(node)
-
-          const url = base64ToBlobUrl(node.attrs.src.split(',')[1]);
-
-          //insert image by changing the node.attrs.src to the blob url
-          tr.steps[0].slice.content.content[0].attrs.src = url;
-          setEditorState((s) => s.apply(tr));
-        }
-        else{
-          console.log('no image pasted')
-          setEditorState((s) => s.apply(tr));
-
-        }
-      }}
+      dispatchTransaction={handleDispatchTransaction}
     >
       <div
         className="ecfw-w-full"
       >
-
         <div className="ecfw-overflow-auto ecfw-rounded-md
-          ecfw-border-slate-300 ecfw-border ecfw-m-4
-          
-        ">
+          ecfw-border-slate-300 ecfw-border ecfw-m-4">
           <Menubar>
             <MenubarMenu>
               <BoldButton />
@@ -213,8 +191,8 @@ export function ProseMirrorEditor({
                     <MenubarItem><HeaderButton level={6} /></MenubarItem>
                   </MenubarSubContent>
                 </MenubarSub>
-                  <MenubarItem><ParagraphButton /></MenubarItem>
-                  <MenubarItem><CodeBlockButton /></MenubarItem>
+                <MenubarItem><ParagraphButton /></MenubarItem>
+                <MenubarItem><CodeBlockButton /></MenubarItem>
               </MenubarContent>
               <UndoButton />
               <RedoButton />
@@ -222,16 +200,16 @@ export function ProseMirrorEditor({
               <BulletListButton />
               <OrderedListButton />
               <BlockquoteButton />
-              <LiftButton /> 
+              <LiftButton />
             </MenubarMenu>
           </Menubar>
         </div>
       </div>
 
       <div ref={setMount} className="ecfw-prosemirror ecfw-h-full ecfw-m-4 ecfw-outline-none"
-      style={{
-        minHeight: '70vh'
-      }} />
+        style={{
+          minHeight: '70vh'
+        }} />
     </ProseMirror>
   );
 }

@@ -11,7 +11,7 @@ import {
 import { Check, ChevronRight, Circle, Bold, Italic, CodeIcon, Link, Undo, Redo, ListOrdered, List, Quote, Outdent, FileType, FileSignature, Image } from "lucide-react"
 import { splitListItem } from "prosemirror-schema-list";
 import { useEditorState } from "@nytimes/react-prosemirror";
-import { cn } from "./lib/utils"
+import { cn } from "../../lib/utils"
 
 
 export function CustomButton({
@@ -312,28 +312,6 @@ export function InsertImage(view) {
     view.focus();
   };
   input.click();
-}
-
-export function base64ToBlobUrl(base64String, contentType) {
-  console.log(base64String)
-  const byteCharacters = atob(base64String);
-  const byteArrays = [];
-
-  for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-    const slice = byteCharacters.slice(offset, offset + 512);
-
-    const byteNumbers = new Array(slice.length);
-    for (let i = 0; i < slice.length; i++) {
-      byteNumbers[i] = slice.charCodeAt(i);
-    }
-
-    const byteArray = new Uint8Array(byteNumbers);
-    byteArrays.push(byteArray);
-  }
-
-  const blob = new Blob(byteArrays, { type: contentType });
-  const blobUrl = URL.createObjectURL(blob);
-  return blobUrl;
 }
 
 //function for image insert button

@@ -4,7 +4,7 @@
 
 //this file must be added to the HTML where the desired buttons are to be placed
 
-import { getAccessToken, dynamicallyLoadScript } from './shared.js';
+import { getAccessToken, dynamicallyLoadScript } from './helpers/userAccessHelpers.js';
 import { initPostEditor } from './PostController.jsx';
 
 try{
@@ -39,9 +39,6 @@ try{
         <div id="react">
         </div>
     `);
-
-    //insert script for prosemirror into html
-    dynamicallyLoadScript(script, `${__JS_PACKAGE_HOST__}/prosemirror.js`);
 
     initPostEditor(postFilePath);
 }

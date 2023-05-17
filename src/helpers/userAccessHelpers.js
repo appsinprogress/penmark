@@ -4,9 +4,9 @@
 
 import { Octokit } from "octokit";
 
-export async function getAccessToken(){
+export async function getAccessToken() {
     var editBlogContentFromSiteSession = localStorage.getItem("edit-blog-content-from-site-session");
-    if(editBlogContentFromSiteSession){
+    if (editBlogContentFromSiteSession) {
         //retrieve github access token from azure function
 
         var response = await fetch("https://edit-blog-content-from-site.azurewebsites.net/api/getAccessToken?" + new URLSearchParams({
@@ -16,15 +16,15 @@ export async function getAccessToken(){
 
         return data.token;
     }
-    else{
+    else {
         throw new Error("You are not logged in.")
         return null;
     }
 }
 
-export async function getUser(accessToken){
+export async function getUser(accessToken) {
     var octokit = new Octokit({
-      auth: accessToken
+        auth: accessToken
     });;
 
     const response = await octokit.request('GET /user', {})
@@ -34,16 +34,16 @@ export async function getUser(accessToken){
     const response2 = await octokit.request('GET /user/emails', {})
 
     const userEmail = response2.data.find(email => email.primary)
-    
+
     user.email = userEmail.email;
 
     return user;
-  }
+}
 
-export function dynamicallyLoadScript(script, url, typeIsModule){
-    var scriptToInsert = document.createElement("script"); 
+export function dynamicallyLoadScript(script, url, typeIsModule) {
+    var scriptToInsert = document.createElement("script");
 
-    if(typeIsModule) scriptToInsert.type = "module";
+    if (typeIsModule) scriptToInsert.type = "module";
     scriptToInsert.src = url;
 
     script.parentElement.appendChild(scriptToInsert);

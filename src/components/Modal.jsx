@@ -1,40 +1,36 @@
 import React, { useEffect, useState, useRef } from "react";
-import "./styles.css";
-import "./basestyles.scss";
-import { ChevronDown, ChevronLeft, ChevronUp, Send, Trash, Save } from "lucide-react"
-import { Root, Separator } from "@radix-ui/react-separator"
+import "../styles/styles.css";
+import "../styles/basestyles.scss";
+import { Send, Trash, Save } from "lucide-react"
 import { Octokit } from "octokit";
-import { getAccessToken, getUser } from "./shared.js";
+import { getAccessToken } from "../helpers/userAccessHelpers.js";
 import { Base64 } from 'js-base64';
-import { ProseMirrorEditorArchive } from "./ProseMirrorEditor_archive.jsx";
-import { ProseMirrorEditor } from "./ProseMirrorEditor.jsx";
-import { Title } from "./components/Title.jsx";
-import { MarkdownEditor } from "./MarkdownEditor.jsx";
-import { encodeFilename, decodeFilename } from "./helpers/filenameEncoding.jsx";
-import { RefreshCcw } from "lucide-react";
-import { Skeleton } from "./components/ui/Skeleton.jsx";
+import { ProseMirrorEditor } from "./editors/ProseMirrorEditor.jsx";
+import { Title } from "./Title.jsx";
+import { MarkdownEditor } from "./editors/MarkdownEditor.jsx";
+import { encodeFilename, decodeFilename } from "../helpers/filenameEncoding.jsx";
+import { Skeleton } from "../lib/ui/Skeleton.jsx";
+import { ModalActionButtons } from "./buttons/ModalActionButtons.jsx";
+import { BackButton } from "./buttons/ModalBackButton.jsx";
 
 const accessToken = await getAccessToken();
 
 export function Modal({
-    show, setShowModalBoolean, draft, loadDrafts
+    show, setShowModalBoolean, draft, loadDrafts, isDraft
 }) {
     var octokit = new Octokit({
         auth: accessToken
     });
 
     const draftDate = draft ? decodeFilename(draft.name).articleDate : new Date().toISOString().split('T')[0];
-    console.log(draftDate)
 
     const [date, setDate] = useState(draftDate);
     const [title, setTitle] = useState(null);
-    const [showDropdown, setShowDropdown] = useState(false);
     const [originalFileContentWithImagesReplacedWithBlobs, setOriginalFileContentWithImagesReplacedWithBlobs] = useState('');
     const [fileContent, setFileContent] = useState('');
     const [fileSha, setFileSha] = useState('');
     const [isMarkdown, setIsMarkdown] = useState(false);
     const fileContentRef = useRef('')
-
     const [isLoading, setIsLoading] = useState(false);
     const [isSavingToGithub, setIsSavingToGithub] = useState(false);
 
@@ -459,28 +455,6 @@ export function Modal({
         }
     }
 
-    function BackButton(){
-        function handleBackPress() {
-
-            const contentToSave = syncContentAcrossProsemirrorAndTextarea();
-
-            if(originalFileContentWithImagesReplacedWithBlobs !== contentToSave){
-                if (confirm("You have unsaved changes. Are you sure you want to leave?")) {
-                    setShowModalBoolean(false);
-                }
-            }
-            else{
-                setShowModalBoolean(false);
-            }
-        }
-
-        return <button
-            className="ecfw-text-bg-primary hover:ecfw-text-bg-primary/90 ecfw-rounded-md ecfw-py-2 ecfw-h-10 "
-            onClick={handleBackPress}>
-            <ChevronLeft className="mr-2 h-4 w-4" />
-        </button>
-    }
-
     function Spinner({
         className
     }) {
@@ -499,6 +473,32 @@ export function Modal({
         return <>
             <div style={loaderStyle} className={className}></div>
         </>
+    }
+
+    function returnModalActions() {
+        let returnModalActions = [
+            {
+                title: 'Publish',
+                icon: <Send className="mr-2 h-4 w-4 ecfw-pr-2 ecfw-py-1" />,
+                action: handlePublishPress
+            },
+            {
+                title: 'Delete',
+                icon: <Trash className="mr-2 h-4 w-4 ecfw-pr-2 ecfw-py-1" />,
+                action: handleDeletePress,
+                className: 'ecfw-text-red-500 hover:ecfw-text-red-500/90'
+            }
+        ];
+        if(isDraft){
+            //add save to beginning of array
+            returnModalActions.unshift({
+                title: 'Save',
+                icon: <Save className="mr-2 h-4 w-4 ecfw-pr-2 ecfw-py-1" />,
+                action: saveDraft
+            })
+        }
+
+        return returnModalActions;
     }
 
     return (<>
@@ -525,7 +525,11 @@ export function Modal({
                 isLoading &&
                 <div id="modal" className="ecfw-max-w-screen-lg ecfw-mx-auto ecfw-m-2 ecfw-h-full">
                     <div id="topbar" className="ecfw-py-2 ecfw-px-4 ecfw-flex ecfw-justify-between">
-                        <BackButton />
+                        <BackButton 
+                            setShowModalBoolean={setShowModalBoolean}
+                            originalFileContentWithImagesReplacedWithBlobs={originalFileContentWithImagesReplacedWithBlobs}
+                            syncContentAcrossProsemirrorAndTextarea={syncContentAcrossProsemirrorAndTextarea}
+                        />
                         <Skeleton className="ecfw-h-10 ecfw-w-44 ecfw-rounded-md" />
                     </div>
                     <div id="content" className="ecfw-px-4 ecfw-pt-4 ecfw-pb-2 ecfw-h-full">
@@ -536,69 +540,18 @@ export function Modal({
                         <Skeleton className="ecfw-h-10 ecfw-w-1/2 ecfw-rounded-md" />
                         <Skeleton className="ecfw-h-5/6 ecfw-w-full ecfw-rounded-md ecfw-my-4" />
                     </div>
-
                 </div>            
             }
             {
                 !isLoading &&
                 <div id="modal" className="ecfw-max-w-screen-lg ecfw-mx-auto ecfw-m-2  ecfw-pb-4">
                     <div id="topbar" className="ecfw-py-2 ecfw-px-4 ecfw-flex ecfw-justify-between">
-                        <BackButton />
-
-                        <div
-                            className="ecfw-flex ecfw-relative"
-                        >
-                            <button id="dropdownDefaultButton"
-                                onClick={() => saveDraft(null, null, true)}
-                                data-dropdown-toggle="dropdown"
-                                className="ecfw-pr-16 ecfw-flex ecfw-h-10 ecfw-rounded-l-md ecfw-py-2 ecfw-px-4 ecfw-bg-primary ecfw-text-primary-foreground hover:ecfw-bg-primary/90"
-                                type="button">
-                                <Save className="mr-2 h-4 w-4 ecfw-pr-2 ecfw-py-1" />
-                                Save
-                            </button>
-                            <button
-                                onClick={() => setShowDropdown(!showDropdown)}
-                                className="ecfw-flex ecfw-h-10 ecfw-rounded-r-md ecfw-py-2 ecfw-border-l-2 ecfw-border-slate-200 ecfw-px-3 ecfw-bg-primary ecfw-text-primary-foreground hover:ecfw-bg-primary/90"                                     >
-                                {
-                                    showDropdown ?
-                                        <ChevronUp className="mr-2 h-4 w-4" />
-                                        :
-                                        <ChevronDown className="mr-2 h-4 w-4" />
-                                }
-                            </button>
-                            {
-                                showDropdown && (
-                                    <div id="dropdown"
-                                        className="ecfw-absolute ecfw-top-10 ecfw-w-full"
-                                    >
-                                        <div
-                                            className="ecfw-border-slate-100 ecfw-z-50 ecfw-min-w-[8rem] ecfw-overflow-hidden ecfw-rounded-md ecfw-border ecfw-bg-popover ecfw-p-1 ecfw-text-popover-foreground ecfw-shadow-md ecfw-animate-in data-[side=bottom]:ecfw-slide-in-from-top-2 data-[side=left]:ecfw-slide-in-from-right-2 data-[side=right]:ecfw-slide-in-from-left-2 data-[side=top]:ecfw-slide-in-from-bottom-2"
-                                        >
-                                            <div
-                                                className="ecfw-cursor-pointer hover:ecfw-bg-secondary/90 ecfw-flex ecfw-relative ecfw-select-none ecfw-items-center ecfw-rounded-sm ecfw-px-2 ecfw-py-2 ecfw-outline-none ecfw-transition-colors focus:ecfw-bg-accent focus:ecfw-text-accent-foreground data-[disabled]:ecfw-pointer-events-none data-[disabled]:ecfw-opacity-50"
-                                                onClick={handlePublishPress}
-                                            >
-                                                <Send className="ml-2 h-4 w-4 ecfw-pr-2" />
-                                                Publish
-                                            </div>
-                                            <Separator
-                                                className="ecfw-shrink-0 ecfw-border-slate-100"
-                                                style={{
-                                                    borderWidth: '0 0 0.1px 0',
-                                                }}
-                                            />
-                                            <div
-                                                className="ecfw-text-red-500  ecfw-cursor-pointer hover:ecfw-bg-secondary/90 ecfw-flex ecfw-relative ecfw-select-none ecfw-items-center ecfw-rounded-sm ecfw-px-2 ecfw-py-2 ecfw-outline-none ecfw-transition-colors focus:ecfw-bg-accent focus:ecfw-text-accent-foreground data-[disabled]:ecfw-pointer-events-none data-[disabled]:ecfw-opacity-50"
-                                                onClick={handleDeletePress}
-                                            >
-                                                <Trash className="ml-2 h-4 w-4 ecfw-pr-2" />
-                                                Delete
-                                            </div>
-                                        </div>
-                                    </div>
-                                )
-                            }
-                        </div>
+                        <BackButton 
+                            setShowModalBoolean={setShowModalBoolean}
+                            originalFileContentWithImagesReplacedWithBlobs={originalFileContentWithImagesReplacedWithBlobs}
+                            syncContentAcrossProsemirrorAndTextarea={syncContentAcrossProsemirrorAndTextarea}
+                        />
+                        <ModalActionButtons actions={returnModalActions()} />
                     </div>
                     <div id="content">
                         <Title value={title} setValue={setTitle} date={date} setDate={setDate} isMarkdown={isMarkdown} setIsMarkdown={handleSetMarkdown} />
@@ -614,3 +567,4 @@ export function Modal({
         </div>
     </>)
 }
+

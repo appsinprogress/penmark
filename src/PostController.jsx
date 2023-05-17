@@ -1,37 +1,11 @@
 import { Octokit } from "octokit";
-import { getAccessToken } from "./shared.js";
-import "./Modal.jsx";
+import { getAccessToken } from "./helpers/userAccessHelpers.js";
 import React, { useState, useEffect } from "react";
 import { createRoot } from 'react-dom/client';
-import { Modal } from "./Modal2.jsx";
+import { Modal } from "./components/Modal.jsx";
 
 var postFilePathInGithub;
 var accessToken;
-
-function openModal(){
-  const modalParent = document.getElementById("modalParent");
-  const modal = document.createElement("modal-component");
-  modal.addEventListener("close", () => {
-    modalParent.removeChild(modal);
-  })
-  modal.fileName = postFilePathInGithub;
-  modal.filePath = postFilePathInGithub;
-  modalParent.appendChild(modal);
-}
- 
-function addButtonEventHandler(){
-  const editButton = document.getElementById("edit-button");
-  editButton.addEventListener("click", () => {
-    openModal();
-  });
-}
-
-// export async function initPostEditor(postFilePath){
-//   postFilePathInGithub = postFilePath;
-
-//   accessToken = await getAccessToken();
-//   addButtonEventHandler();
-// }
 
 function EditPostComponent(){
   const [showModalBoolean, setShowModalBoolean] = useState(false);
@@ -40,8 +14,23 @@ function EditPostComponent(){
   console.log(postFilePathInGithub)
 
   function handleEdit(){
-    console.log('weit')
     setShowModalBoolean(true);
+
+    //adjust height
+    document.body.style.height = "100vh";
+    document.body.style.overflow = "hidden";
+
+    //add editor path to the navigation history
+    history.pushState({page: "editor"}, "editor", "/editor");
+
+    //set back button to close the modal
+    window.onpopstate = function(event) {
+        setShowModalBoolean(false);
+
+        //adjust height
+        document.body.style.height = "auto";
+        document.body.style.overflow = "auto";
+    }
   }
 
   useEffect(() => {
@@ -64,8 +53,6 @@ function EditPostComponent(){
     });
 
     const content = response.data.content;
-    console.log(content)
-    const decodedContent = atob(content);
     setEditingDraft(response.data);
   }
 
@@ -115,15 +102,15 @@ function EditPostComponent(){
                 Edit
             </button>
         </div> 
-        <div id="modalParent">
           {
-              showModalBoolean ? <Modal 
+              showModalBoolean ? 
+                <Modal 
                   setShowModalBoolean={setShowModalWithBodyHeightAdjusted} 
                   draft={editingDraft} 
                   loadDrafts={() => {}}
-                  /> : null
+                  isDraft={false}
+                /> : null
           }
-        </div>
     </div>
   )
 }

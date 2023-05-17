@@ -1,13 +1,10 @@
 import React from 'react';
-import { MarkdownToggleButton } from '../CustomButtons.jsx';
-
+import { MarkdownToggleButton } from './buttons/CustomEditorButtons.jsx';
 
 export const Title = ({ value, setValue, date, setDate, isMarkdown, setIsMarkdown }) => {
   const handleChange = (event) => {
     setValue(event.target.value);
   };
-
-  console.log(date)
 
   date = date || new Date().toISOString().split('T')[0];
 

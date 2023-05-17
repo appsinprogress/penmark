@@ -2,13 +2,13 @@
 //it's responsibility is to inject the necessary styles, HTML content, and scripts 
 //to the target blog needed to provide the CMS functionality
 
-import { getAccessToken, dynamicallyLoadScript } from './shared.js';
+import { getAccessToken, dynamicallyLoadScript } from './helpers/userAccessHelpers.js';
 import { initDrafts } from './DraftsController.jsx';
 
 try{
     await getAccessToken();
 
-    var script = document.querySelector(`script[src="${__JS_PACKAGE_HOST__}/DraftsClient.js"]`);//TODO: make this dynamic
+    var script = document.querySelector(`script[src="${__JS_PACKAGE_HOST__}/DraftsClient.js"]`);
     
     //insert styles into html
     script.insertAdjacentHTML('afterend', /*html*/`
@@ -121,9 +121,6 @@ try{
         <div id="react"></div>
         <div id="cms-drafts" style="display: none;"></div>
     `);
-    
-    //insert script for prosemirror into html
-    // dynamicallyLoadScript(script, `${__JS_PACKAGE_HOST__}/prosemirror.js`); //TODO: make this dynamic
     
     initDrafts();
 }
