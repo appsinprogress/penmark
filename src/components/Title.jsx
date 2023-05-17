@@ -25,7 +25,7 @@ export const Title = ({ value, setValue, date, setDate, isMarkdown, setIsMarkdow
 
       </div>
       <input type="text" value={value} onChange={handleChange} placeholder='Title'
-        className='ecfw-outline-none ecfw-text-4xl ecfw-font-bold ecfw-text-foreground ecfw-bg-background ecfw-rounded-sm ecfw-w-full'
+        className='ecfw-outline-none ecfw-text-3xl ecfw-font-bold ecfw-text-foreground ecfw-bg-background ecfw-rounded-sm ecfw-w-full'
       />
     </div>
   );

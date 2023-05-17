@@ -178,10 +178,12 @@ export function ProseMirrorEditor({
         style={virtualKeyboardSupported ?{
           position: 'fixed',
           bottom: keyboardHeight,
+          maxWidth: 1040,
+          paddingRight: '1em'
         } : {}}
       >
         <div className="ecfw-overflow-auto ecfw-rounded-md
-          ecfw-border-slate-300 ecfw-border ecfw-m-4">
+          ecfw-border-slate-300 ecfw-bg-white ecfw-border ecfw-m-4">
           <Menubar>
             <MenubarMenu>
               <BoldButton />
