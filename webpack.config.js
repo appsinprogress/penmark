@@ -52,7 +52,7 @@ module.exports = {
         new webpack.DefinePlugin({
             // __JS_PACKAGE_HOST__: JSON.stringify("http://10.0.0.169:9000") //for local development with host 0.0.0.0
             // __JS_PACKAGE_HOST__: JSON.stringify("http://localhost:9000") //for local development
-            __JS_PACKAGE_HOST__: JSON.stringify("https://cdn.jsdelivr.net/npm/edit-blog-from-site@0.0.19/dist") //for production
+            __JS_PACKAGE_HOST__: JSON.stringify("https://cdn.jsdelivr.net/npm/edit-blog-from-site@0.0.20/dist") //for production
         }),
         new webpack.ProvidePlugin({
             Buffer: ['buffer', 'Buffer'],
