@@ -10,10 +10,14 @@ export function addEditorToNavigationHistoryWithBackHandler(setShowModalBoolean)
 
     //set back button to close the modal
     window.onpopstate = function (event) {
-        setShowModalBoolean(false);
-
-        //adjust height
-        document.body.style.height = "auto";
-        document.body.style.overflow = "auto";
+        if (confirm("You may have unsaved changes. Are you sure you want to leave?")) {
+            setShowModalBoolean(false);
+            //adjust height
+            document.body.style.height = "auto";
+            document.body.style.overflow = "auto";
+        }
+        else{
+            history.pushState({ page: "editor" }, "editor", "/editor");
+        }
     }
 }

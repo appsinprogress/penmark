@@ -13,7 +13,7 @@ import { Skeleton } from "../lib/ui/Skeleton.jsx";
 import { ModalActionButtons } from "./buttons/ModalActionButtons.jsx";
 import { BackButton } from "./buttons/ModalBackButton.jsx";
 import { Spinner } from "./Spinner.jsx";
-import { blobToBase64, loadImagesForContentAsBlobs } from "../helpers/imageParsingHelpers.js";
+import { blobToBase64, loadImagesForContentAsBlobs, extractImageInfoFromMarkdown } from "../helpers/imageParsingHelpers.js";
 
 const accessToken = await getAccessToken();
 
@@ -35,6 +35,23 @@ export function Modal({
     const fileContentRef = useRef('')
     const [isLoading, setIsLoading] = useState(false);
     const [isSavingToGithub, setIsSavingToGithub] = useState(false);
+
+    //set warning when the page is reloaded without saving
+    useEffect(() => {
+        const handleBeforeUnload = (event) => {
+          event.preventDefault(); // Cancel the event
+          event.returnValue = ''; // Chrome requires assigning a value to event.returnValue
+          if(fileContentRef.current !== originalFileContentWithImagesReplacedWithBlobs){
+            return "You have unsaved changes. Are you sure you want to leave?";
+          }
+        };
+    
+        window.addEventListener('beforeunload', handleBeforeUnload);
+    
+        return () => {
+          window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+      }, []);
 
     useEffect(() => {
         if(draft){
@@ -81,7 +98,7 @@ export function Modal({
         const fileContent = Base64.decode(response.data.content);
         let fileContentWithImages = fileContent;
         try{
-            fileContentWithImages = await loadImagesForContentAsBlobs(fileContent);
+            fileContentWithImages = await loadImagesForContentAsBlobs(fileContent, octokit);
         }
         catch(e){
             console.log('images missing')
@@ -170,7 +187,7 @@ export function Modal({
             console.log('some images to save')
             console.log(images)
             //for each image
-            await saveImagesToGithub(images, defaultDraftImageFolder, publishImageFolder, contentToSave);
+            contentToSave = await saveImagesToGithub(images, defaultDraftImageFolder, publishImageFolder, contentToSave);
         }
 
         //if the draft exists, save it in the same path
@@ -200,7 +217,11 @@ export function Modal({
             try {
                 console.log("saving image");
                 //get the image url from ![](blob:http://127.0.0.1:4000/89136718-69f2-41ef-ba7d-866da819d417 "pexels-pixabay-45201.jpg")
-                const imageUrl = images[i].match(/(blob:[^\s)]+)/g)[0];
+                
+                const { description, url, filename } = extractImageInfoFromMarkdown(images[i]);
+                
+                // const imageUrl = images[i].match(/(blob:[^\s)]+)/g)[0];
+                const imageUrl = url;
                 console.log(imageUrl);
 
                 console.log(images[i]);
@@ -208,16 +229,15 @@ export function Modal({
                 //strip quotes from file name
                 let fileName = imageUrl; //this is going to be the filename
                 const imageSrcFromMarkdownFormat = images[i].match(/\((.*?)\)/g)[0];
-                const imageDescription = images[i].match(/!\[(.*?)\]/g)[0].substring(2, images[i].match(/!\[(.*?)\]/g)[0].length - 1);
+                const imageDescription = description;
 
-                if (imageSrcFromMarkdownFormat.includes(' ')) { //we can get the name of the file from the example image url above
-                    const imageFilenameFromMarkdownFormat = imageSrcFromMarkdownFormat.split(' ')[1];
-                    fileName = imageFilenameFromMarkdownFormat.substring(1, imageFilenameFromMarkdownFormat.length - 2);
-                }
-                else { //if there is no image name, we url encode the image description
+                if(!filename){
                     fileName = encodeURIComponent(imageDescription);
                 }
-
+                else{
+                    fileName = filename;
+                }
+                
                 //get the image data from the url
                 const blob = await fetch(imageUrl).then(r => r.blob());
                 const imageData = await blobToBase64(blob);
@@ -286,6 +306,8 @@ export function Modal({
                 console.log("There was some error in saving to github. Not saving changes.");
             }
         }
+
+        return contentToSave;
     }
 
     async function saveExistingDraftThatHasBeenRenamedToGithub(newFileName, publishMarkdownFolder, draft, skipCi, contentToSave, fileSha) {

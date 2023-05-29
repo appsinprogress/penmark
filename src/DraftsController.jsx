@@ -37,19 +37,19 @@ function DraftLine({ draft, setShowModalBoolean, setEditingDraft }) {
 }
 
 function DraftsComponent() {
-  const [isDraftsVisible, setIsDraftsVisible] = useState(false);
+  const [isDraftsVisible, setIsDraftsVisible] = useState(true);
   const [drafts, setDrafts] = useState([]);
   const [draftsLoaded, setDraftsLoaded] = useState(false);
   const [showModalBoolean, setShowModalBoolean] = useState(false);
   const [editingDraft, setEditingDraft] = useState(null);
 
-  //function that sets show modal boolean and sets the height of the body to 100vh when toggled
+  //function that toggles show modal boolean and sets the height of the body to 100vh when toggled
   //and removes it 
-  function setShowModalWithBodyHeightAdjusted() {
-    const newIsModalOpen = !showModalBoolean;
-    setShowModalBoolean(newIsModalOpen);
+  function setShowModalWithBodyHeightAdjusted(showModal) {
+    if(showModal === undefined) showModal = !showModalBoolean; //support toggling
+    setShowModalBoolean(showModal);
 
-    if (newIsModalOpen) {
+    if (showModal) {
       setBodyToFixedHeight();
       addEditorToNavigationHistoryWithBackHandler(setShowModalBoolean);
     }
@@ -59,7 +59,7 @@ function DraftsComponent() {
       document.body.style.overflow = "auto";
 
       //remove editor path from the navigation history
-      history.back();
+      history.pushState({ page: "home" }, null, "/");
     }
   }
 
@@ -71,6 +71,8 @@ function DraftsComponent() {
   }, []);
 
   const toggleDrafts = () => {
+    console.log("toggle drafts")
+    console.log("draft is visible ", isDraftsVisible)
     setIsDraftsVisible(!isDraftsVisible);
   };
 
@@ -143,7 +145,7 @@ function DraftsComponent() {
       <div className="button-container" id="create-draft" onClick={() => {
         // const draftContainer = document.getElementById("cms-drafts");
         // showModal(null, draftContainer);
-        setShowModalWithBodyHeightAdjusted(true);
+        setShowModalWithBodyHeightAdjusted();
         setEditingDraft(null);
       }}>
         <i
@@ -154,7 +156,7 @@ function DraftsComponent() {
       </div>
     </div>
     {
-      draftsLoaded ?
+      draftsLoaded && isDraftsVisible &&
         <div id="cms-drafts-draftlist">
           {drafts.map((draft, i) => <>
             <DraftLine
@@ -164,7 +166,9 @@ function DraftsComponent() {
             />
           </>)}
         </div>
-        :
+    } 
+    {
+      !draftsLoaded && isDraftsVisible &&
         <div style={{ margin: 'auto', width: 'fit-content' }}>
           <div id="loadersmall" className="loadersmall"></div>
         </div>

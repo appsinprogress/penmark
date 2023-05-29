@@ -31,19 +31,18 @@
 // TODO: [ ] create repos & landing page
 
 
-
 // TODO: [ ] Post launch
 // TODO: [ ] Add react router to load the modal to handle back and forward with proper navigation history
 // TODO: [ ] improve 
 
 import { EditorState } from "prosemirror-state";
 import { splitListItem } from "prosemirror-schema-list";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { ProseMirror } from "@nytimes/react-prosemirror";
 import {
   BoldButton, ItalicButton, ImageInsertButton, CodeButton, LinkButton, HorizontalRuleButton, HeaderButton,
   CodeBlockButton, UndoButton, RedoButton, BulletListButton, OrderedListButton,
-  BlockquoteButton, LiftButton, ParagraphButton
+  BlockquoteButton, LiftButton, ParagraphButton, HeadingTriggerButton
 } from "../buttons/CustomEditorButtons.jsx";
 import { schema, defaultMarkdownParser, defaultMarkdownSerializer } from "prosemirror-markdown"
 import { undo, redo, history } from "prosemirror-history"
@@ -62,6 +61,7 @@ import {
   MenubarSubTrigger,
   MenubarSubContent,
 } from "../../lib/ui/MenuBar.jsx"
+import { Heading } from "lucide-react";
 import { base64ToBlobUrl } from "../../helpers/imageParsingHelpers.js";
 
 const defaultMarkdownKeymap = buildKeymap(schema, {});
@@ -92,6 +92,7 @@ export function ProseMirrorEditor({
       })
     })
   );
+
 
   const { keyboardHeight, virtualKeyboardSupported } = useKeyboardDimensions();
 
@@ -186,27 +187,29 @@ export function ProseMirrorEditor({
           ecfw-border-slate-300 ecfw-bg-white ecfw-border ecfw-m-4">
           <Menubar>
             <MenubarMenu>
+              <MenubarTrigger>
+                <HeadingTriggerButton />
+              </MenubarTrigger>
+              <MenubarContent>
+                <MenubarSub>
+                  <MenubarSubTrigger>Heading</MenubarSubTrigger>
+                  <MenubarSubContent>
+                    <HeaderButton level={1} />
+                    <HeaderButton level={2} />
+                    <HeaderButton level={3} />
+                    <HeaderButton level={4} />
+                    <HeaderButton level={5} />
+                    <HeaderButton level={6} />
+                  </MenubarSubContent>
+                </MenubarSub>
+                <ParagraphButton />
+                <CodeBlockButton />
+              </MenubarContent>
               <BoldButton />
               <ItalicButton />
               <CodeButton />
               <LinkButton />
               <ImageInsertButton />
-              <MenubarTrigger>Type...</MenubarTrigger>
-              <MenubarContent>
-                <MenubarSub>
-                  <MenubarSubTrigger>Heading</MenubarSubTrigger>
-                  <MenubarSubContent>
-                    <MenubarItem><HeaderButton level={1} /></MenubarItem>
-                    <MenubarItem><HeaderButton level={2} /></MenubarItem>
-                    <MenubarItem><HeaderButton level={3} /></MenubarItem>
-                    <MenubarItem><HeaderButton level={4} /></MenubarItem>
-                    <MenubarItem><HeaderButton level={5} /></MenubarItem>
-                    <MenubarItem><HeaderButton level={6} /></MenubarItem>
-                  </MenubarSubContent>
-                </MenubarSub>
-                <MenubarItem><ParagraphButton /></MenubarItem>
-                <MenubarItem><CodeBlockButton /></MenubarItem>
-              </MenubarContent>
               <UndoButton />
               <RedoButton />
               <HorizontalRuleButton />

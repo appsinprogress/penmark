@@ -8,11 +8,13 @@ import {
   schema, defaultMarkdownParser,
   defaultMarkdownSerializer
 } from "prosemirror-markdown"
-import { Check, ChevronRight, Circle, Bold, Italic, CodeIcon, Link, Undo, Redo, ListOrdered, List, Quote, Outdent, FileType, FileSignature, Image } from "lucide-react"
+import { Check, ChevronRight, Circle, Heading, Bold, Italic, CodeIcon, Link, Undo, Redo, ListOrdered, List, Quote, Outdent, FileType, FileSignature, Image } from "lucide-react"
 import { splitListItem } from "prosemirror-schema-list";
 import { useEditorState } from "@nytimes/react-prosemirror";
 import { cn } from "../../lib/utils"
-
+import {
+  MenubarItem,
+} from "../../lib/ui/MenuBar.jsx"
 
 export function CustomButton({
   onClick,
@@ -25,7 +27,7 @@ export function CustomButton({
       cn(
         //conditionally apply transparency on disabled buttons
         disabled ? "ecfw-opacity-30" : "",
-        "ecfw-flex ecfw-cursor-pointer ecfw-select-none ecfw-items-center ecfw-rounded-sm ecfw-px-3 ecfw-py-1.5 ecfw-text-sm ecfw-font-medium ecfw-outline-none focus:ecfw-bg-accent focus:ecfw-text-accent-foreground data-[state=open]:ecfw-bg-accent data-[state=open]:ecfw-text-accent-foreground"
+        "ecfw-block ecfw-cursor-pointer ecfw-select-none ecfw-items-center ecfw-rounded-sm ecfw-px-3 ecfw-py-1.5 ecfw-text-sm ecfw-font-medium ecfw-outline-none focus:ecfw-bg-accent focus:ecfw-text-accent-foreground data-[state=open]:ecfw-bg-accent data-[state=open]:ecfw-text-accent-foreground"
       )
     }
   >
@@ -47,6 +49,10 @@ export function BoldButton() {
   return <CustomButton onClick={onClick} disabled={!canExecuteCommand}>
     <Bold />
   </CustomButton>;
+}
+
+export function HeadingTriggerButton() {
+  return <Heading />;
 }
 
 //italic button
@@ -123,13 +129,16 @@ export function HeaderButton({ level }) {
   const canExecuteCommand = setHeaderCmd(editorState)
 
   const onClick = useEditorEventCallback((view) => {
+    console.log(view.state)
     setHeaderCmd(view.state, view.dispatch, view);
     view.focus();
+    console.log(view.state)
   })
 
-  return <div onClick={onClick}
+  return <MenubarItem onSelect={onClick}><div 
+    
     className={canExecuteCommand ? '' : 'ecfw-opacity-30'}
-  >Heading {level}</div>;
+  >Heading {level}</div></MenubarItem>;
 }
 
 export function CodeBlockButton() {
@@ -139,16 +148,21 @@ export function CodeBlockButton() {
   const canExecuteCommand = setCodeBlockCmd(editorState)
 
   const onClick = useEditorEventCallback((view) => {
+    console.log(view.state)
     setCodeBlockCmd(view.state, view.dispatch, view);
     view.focus();
+    console.log(view.state)
   });
 
-  return <div onClick={onClick}
-    className={canExecuteCommand ? '' : 'ecfw-opacity-30'}
-  >
-    Code block
-
-  </div>;
+  return (
+  <MenubarItem onSelect={onClick}>
+    <div
+      className={canExecuteCommand ? '' : 'ecfw-opacity-30'}
+    >
+      Code block
+    </div>
+  </MenubarItem>
+  )
 }
 
 export function UndoButton() {
@@ -259,11 +273,11 @@ export function ParagraphButton() {
     view.focus();
   })
 
-  return <div onClick={onClick}
+  return <MenubarItem onSelect={onClick}><div
     className={canExecuteCommand ? '' : 'ecfw-opacity-30'}
   >Paragraph
 
-  </div>;
+  </div></MenubarItem>;
 }
 
 export function MarkdownToggleButton({

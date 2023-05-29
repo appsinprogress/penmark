@@ -58,7 +58,7 @@ function EditPostComponent(){
         document.body.style.overflow = "auto";
 
         //remove editor path from the navigation history
-        history.back();
+        history.pushState({ page: "home" }, null, "/");
     } 
   }
 

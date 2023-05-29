@@ -1,10 +1,33 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import { MarkdownToggleButton } from './buttons/CustomEditorButtons.jsx';
 
 export const Title = ({ value, setValue, date, setDate, isMarkdown, setIsMarkdown }) => {
+  const textareaRef = useRef(null);
+
   const handleChange = (event) => {
     setValue(event.target.value);
   };
+
+  const handleTextareaResize = () => {
+    textareaRef.current.style.height = 'auto';
+    textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+  };
+
+  //properly size the textbox when it loads and when the window resizes
+  useEffect(() => {
+
+    handleTextareaResize();
+    
+    const handleWindowResize = () => {
+      handleTextareaResize();  
+    };
+  
+    window.addEventListener('resize', handleWindowResize);
+  
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, [textareaRef]);
 
   date = date || new Date().toISOString().split('T')[0];
 
@@ -24,7 +47,11 @@ export const Title = ({ value, setValue, date, setDate, isMarkdown, setIsMarkdow
         />
 
       </div>
-      <input type="text" value={value} onChange={handleChange} placeholder='Title'
+      <textarea type="text" value={value} onChange={handleChange} placeholder='Title'
+        ref={textareaRef}
+        rows={1}
+        onInput={handleTextareaResize}
+        style={{ resize: 'none', overflow: 'hidden' }}
         className='ecfw-outline-none ecfw-text-3xl ecfw-font-bold ecfw-text-foreground ecfw-bg-background ecfw-rounded-sm ecfw-w-full'
       />
     </div>

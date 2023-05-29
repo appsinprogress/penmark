@@ -27,25 +27,37 @@ export function blobToBase64(blob) {
     });
 }
 
-export async function loadImagesForContentAsBlobs(fileContent) {
+export async function loadImagesForContentAsBlobs(fileContent, octokit) {
     //regex to find all the images
     const images = fileContent.match(/!\[.*?\]\(.*?\)/g);
 
+    console.log(images)
     //if there are images
     if (images) {
         //iterate through all of the images
         for (let i = 0; i < images.length; i++) {
 
-            //get image filename
-            const imageFilepath = images[i].match(/\((.*?)\)/)[1];
-            const imageFilename = imageFilepath.split('/').pop();
+            const {
+                description,
+                url,
+                filename
+            } = extractImageInfoFromMarkdown(images[i]);
 
-            //fetch the image from the github
-            const response = await octokit.rest.repos.getContent({
-                owner: 'thomasgauvin',
-                repo: 'blog',
-                path: `_drafts/${imageFilename}`,
-            })
+            //get image filename
+            const imageFilename = url.substring(2, url.length);
+
+            let response = null
+            try{
+                //fetch the image from the github
+                response = await octokit.rest.repos.getContent({
+                    owner: 'thomasgauvin',
+                    repo: 'blog',
+                    path: `_drafts/${imageFilename}`,
+                })
+            }
+            catch(error){
+                console.log(error)
+            }
 
             //convert response.data.content to blob
             //get data type from url
@@ -62,9 +74,10 @@ export async function loadImagesForContentAsBlobs(fileContent) {
             console.log(imageBlobUrl)
 
             //replace the image url with the blob url
-            fileContent = fileContent.replace(imageFilepath, `${imageBlobUrl} "${imageFilename}"`);
+            fileContent = fileContent.replace(url, `${imageBlobUrl} "${imageFilename}"`);
         }
     }
+    console.log(fileContent)
     return fileContent;
 }
 
@@ -92,3 +105,18 @@ function getFileDataType(extension) {
     // Return a default data type if the extension is not found
     return 'image/png'; // You can change the default data type if desired
 }
+
+export function extractImageInfoFromMarkdown(markdownImage) {
+    const regex = /!\[(.*?)\]\((.*?)\s?("(.*?)")?\)/;
+    const matches = markdownImage.match(regex);
+  
+    if (matches) {
+      const description = matches[1];
+      const url = matches[2];
+      const filename = matches[3] ? matches[3].replace(/"/g, '') : null;
+  
+      return { description, url, filename };
+    }
+  
+    return null;
+  }
