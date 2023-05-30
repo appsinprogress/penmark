@@ -8,7 +8,15 @@ import { setBodyToFixedHeight, addEditorToNavigationHistoryWithBackHandler } fro
 var postFilePathInGithub;
 var accessToken;
 
-function EditPostComponent(){
+function EditPostComponent({
+  postFilePath,
+  draftsFolder,
+  postsFolder,
+  imagesFolder,
+  githubUsername,
+  githubRepoName
+}){
+  console.log(githubRepoName)
   const [showModalBoolean, setShowModalBoolean] = useState(false);
   const [editingDraft, setEditingDraft] = useState(null);
 
@@ -32,14 +40,24 @@ function EditPostComponent(){
         auth: accessToken
     });;
 
-    const response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
-        owner: 'thomasgauvin',
-        repo: 'blog',
-        path: postFilePathInGithub
-    });
+    console.log(githubRepoName)
+
+    let response;
+    try{
+      response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
+        owner: githubUsername,
+        repo: githubRepoName,
+        path: postFilePath
+      });
+    }
+    catch(e){
+      console.log(e)
+    }
 
     const content = response.data.content;
     setEditingDraft(response.data);
+
+    console.log(content)
   }
 
   //function that sets show modal boolean and sets the height of the body to 100vh when toggled
@@ -77,6 +95,11 @@ function EditPostComponent(){
           {
               showModalBoolean ? 
                 <Modal 
+                  draftsFolder={draftsFolder}
+                  postsFolder={postsFolder}
+                  imagesFolder={imagesFolder}
+                  githubUsername={githubUsername}
+                  githubRepoName={githubRepoName}
                   setShowModalBoolean={setShowModalWithBodyHeightAdjusted} 
                   draft={editingDraft} 
                   loadDrafts={() => {}}
@@ -87,17 +110,22 @@ function EditPostComponent(){
   )
 }
 
-export async function initPostEditor(postFilePath){
+export async function initPostEditor(postFilePath, draftsFolder, postsFolder, imagesFolder, githubUsername, githubRepoName){
   console.log(postFilePath)
   postFilePathInGithub = postFilePath;
 
   accessToken = await getAccessToken();
-  // setupDrafts();
-  // listDrafts();
-  setupReact();
+  setupReact(postFilePath, draftsFolder, postsFolder, imagesFolder, githubUsername, githubRepoName);
 }
 
-function setupReact(){
+function setupReact(postFilePath, draftsFolder, postsFolder, imagesFolder, githubUsername, githubRepoName){
   const root = createRoot(document.getElementById('react'));
-  root.render(<EditPostComponent />);
+  root.render(<EditPostComponent 
+    postFilePath={postFilePath}
+    draftsFolder={draftsFolder}
+    postsFolder={postsFolder}
+    imagesFolder={imagesFolder}
+    githubUsername={githubUsername}
+    githubRepoName={githubRepoName}
+  />);
 }

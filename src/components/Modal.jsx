@@ -18,7 +18,8 @@ import { blobToBase64, loadImagesForContentAsBlobs, extractImageInfoFromMarkdown
 const accessToken = await getAccessToken();
 
 export function Modal({
-    show, setShowModalBoolean, draft, loadDrafts, isDraft
+    setShowModalBoolean, draft, loadDrafts, isDraft,
+    postsFolder, draftsFolder, imagesFolder, githubUsername, githubRepoName
 }) {
     var octokit = new Octokit({
         auth: accessToken
@@ -73,9 +74,9 @@ export function Modal({
     //async function to fetch default template file from github
     async function loadTemplate(){
         const response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
-            owner: 'thomasgauvin',
-            repo: 'blog',
-            path: '_drafts/template.md',
+            owner: githubUsername,
+            repo: githubRepoName,
+            path: `${draftsFolder}/template.md`,
         });
 
         const fileContent = Base64.decode(response.data.content);
@@ -89,8 +90,8 @@ export function Modal({
     async function loadFileContent() {
         setIsLoading(true);
         var response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
-            owner: 'thomasgauvin',
-            repo: 'blog',
+            owner: githubUsername,
+            repo: githubRepoName,
             path: `${draft.path}`,
         });
         setFileSha(response.data.sha);
@@ -135,8 +136,8 @@ export function Modal({
         console.log('deleting draft')
         console.log(draft)
         await octokit.rest.repos.deleteFile({
-            owner: 'thomasgauvin',
-            repo: 'blog',
+            owner: githubUsername,
+            repo: githubRepoName,
             path: `${draft.path}`,
             message: 'delete draft [skip ci]',
             sha: fileSha
@@ -174,10 +175,10 @@ export function Modal({
         console.log('saving draft')
         setIsSavingToGithub(true);
 
-        if(!publishMarkdownFolder) publishMarkdownFolder = '_drafts';
-        if(!publishImageFolder) publishImageFolder = '_drafts'
+        if(!publishMarkdownFolder) publishMarkdownFolder = draftsFolder;
+        if(!publishImageFolder) publishImageFolder = draftsFolder;
     
-        const defaultDraftImageFolder = '_drafts';
+        const defaultDraftImageFolder = draftsFolder;
 
         let contentToSave = syncContentAcrossProsemirrorAndTextarea();
 
@@ -248,8 +249,8 @@ export function Modal({
                 try {
                     //get image from repo
                     originalImage = await octokit.request('GET /repos/{owner}/{repos}/contents/{path}', {
-                        owner: 'thomasgauvin',
-                        repo: 'blog',
+                        owner: githubUsername,
+                        repo: githubRepoName,
                         path: `${defaultDraftImageFolder}/${fileName}`,
                     });
                 }
@@ -264,8 +265,8 @@ export function Modal({
                     console.log('trying to save file in a new filepath', `${publishImageFolder}/${fileName}`);
                     try {
                         await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
-                            owner: 'thomasgauvin',
-                            repo: 'blog',
+                            owner: githubUsername,
+                            repo: githubRepoName,
                             path: `${publishImageFolder}/${fileName}`,
                             message: 'create image [skip ci]',
                             content: imageDataOnlyBase64
@@ -280,8 +281,8 @@ export function Modal({
                     if (originalImage) {
                         try {
                             await octokit.request('DELETE /repos/{owner}/{repo}/contents/{path}', {
-                                owner: 'thomasgauvin',
-                                repo: 'blog',
+                                owner: githubUsername,
+                                repo: githubRepoName,
                                 path: `${defaultDraftImageFolder}/${fileName}`,
                                 message: 'delete image [skip ci]',
                                 sha: originalImage.data.sha
@@ -315,8 +316,8 @@ export function Modal({
         const updateMessage = skipCi ? `update draft [skip ci]` : `update draft`;
         //rename the draft
         await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
-            owner: 'thomasgauvin',
-            repo: 'blog',
+            owner: githubUsername,
+            repo: githubRepoName,
             path: `${publishMarkdownFolder}/${newFileName}`,
             message: updateMessage,
             content: Base64.encode(contentToSave),
@@ -324,8 +325,8 @@ export function Modal({
 
         //delete the old draft
         await octokit.rest.repos.deleteFile({
-            owner: 'thomasgauvin',
-            repo: 'blog',
+            owner: githubUsername,
+            repo: githubRepoName,
             path: `${draft.path}`,
             message: 'delete draft [skip ci]',
             sha: fileSha
@@ -337,8 +338,8 @@ export function Modal({
         //save the draft
         const message = skipCi ? `update draft [skip ci]` : `update draft`;
         await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
-            owner: 'thomasgauvin',
-            repo: 'blog',
+            owner: githubUsername,
+            repo: githubRepoName,
             path: `${draft.path}`,
             message: message,
             content: Base64.encode(contentToSave),
@@ -356,8 +357,8 @@ export function Modal({
         //save the draft with a new name
         const message = skipCi? `create draft [skip ci]` : `create draft`
         await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
-            owner: 'thomasgauvin',
-            repo: 'blog',
+            owner: githubUsername,
+            repo: githubRepoName,
             path: `${publishMarkdownFolder}/${encodeFilename(title, date)}`,
             message: message,
             content: Base64.encode(contentToSave),
@@ -415,7 +416,8 @@ export function Modal({
             height: '100lvh',
             backgroundColor: 'white',
             overflowY: 'scroll',
-            paddingBottom: '4em'
+            paddingBottom: '4em',
+            zIndex: 1
         }}>
             {
                 isSavingToGithub && //dark grey overlay with spinner in the middle

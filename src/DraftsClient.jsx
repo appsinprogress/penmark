@@ -10,6 +10,39 @@ try{
 
     var script = document.querySelector(`script[src="${__JS_PACKAGE_HOST__}/DraftsClient.js"]`);
     
+    //the script looks like this
+    // <script 
+    //     type="module" 
+    //     src="http://localhost:9000/DraftsClient.js"
+    //     draftsFolder="drafts"
+    //     postsFolder="content/posts"
+    //     imagesFolder="static/images"
+    //     githubUsername="username>"
+    //     githubRepoName="blog"
+    // ></script>
+
+    //extract the information from the script tag
+    //default are jekyll values
+
+    //get the draft folder name
+    var draftsFolder = script.getAttribute('draftsFolder');
+    if(!draftsFolder) draftsFolder = '_drafts';
+
+    //get the posts folder name
+    var postsFolder = script.getAttribute('postsFolder');
+    if(!postsFolder) postsFolder = '_posts';
+
+    //get the images folder name
+    var imagesFolder = script.getAttribute('imagesFolder');
+    if(!imagesFolder) imagesFolder = 'uploads';
+
+    //get the github username
+    var githubUsername = script.getAttribute('githubUsername');
+
+    //get the github repo name
+    var githubRepoName = script.getAttribute('githubRepoName');
+
+
     //insert styles into html
     script.insertAdjacentHTML('afterend', /*html*/`
         <style>
@@ -122,7 +155,7 @@ try{
         <div id="cms-drafts" style="display: none;"></div>
     `);
     
-    initDrafts();
+    initDrafts(draftsFolder, postsFolder, imagesFolder, githubUsername, githubRepoName);
 }
 catch(e){
     //do nothing, user is not signed in

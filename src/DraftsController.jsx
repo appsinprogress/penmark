@@ -36,7 +36,13 @@ function DraftLine({ draft, setShowModalBoolean, setEditingDraft }) {
   );
 }
 
-function DraftsComponent() {
+function DraftsComponent({
+  draftsFolder,
+  postsFolder,
+  imagesFolder,
+  githubUsername,
+  githubRepoName
+}) {
   const [isDraftsVisible, setIsDraftsVisible] = useState(true);
   const [drafts, setDrafts] = useState([]);
   const [draftsLoaded, setDraftsLoaded] = useState(false);
@@ -84,9 +90,9 @@ function DraftsComponent() {
     let user = await getUser(accessToken);
 
     var response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
-      owner: 'thomasgauvin',
-      repo: 'blog',
-      path: `_drafts`,
+      owner: githubUsername,
+      repo: githubRepoName,
+      path: draftsFolder,
       headers: {
         'If-None-Match': '' //allows fresh data to be fetched, https://github.com/octokit/octokit.js/issues/890
       }
@@ -99,25 +105,6 @@ function DraftsComponent() {
 
     setDrafts(response.data);
     setDraftsLoaded(true);
-  }
-
-  function showModal(draft, draftContainer) {
-    const modal = document.createElement("modal-component");
-    modal.addEventListener("close", () => {
-      draftContainer.removeChild(modal);
-      loadDrafts(); //refresh in case a new file was created
-    })
-
-    if (draft == null) {
-      modal.fileName = "";
-      modal.isNewFile = true;
-    }
-    else {
-      modal.fileName = draft.name;
-      modal.filePath = draft.path;
-    }
-
-    draftContainer.appendChild(modal);
   }
 
   return (<div id="cms-drafts">
@@ -180,6 +167,11 @@ function DraftsComponent() {
           draft={editingDraft}
           loadDrafts={loadDrafts}
           isDraft={true}
+          draftsFolder={draftsFolder}
+          postsFolder={postsFolder}
+          imagesFolder={imagesFolder}
+          githubUsername={githubUsername}
+          githubRepoName={githubRepoName}
         />
         :
         null
@@ -188,12 +180,18 @@ function DraftsComponent() {
   );
 }
 
-function setupReact() {
+function setupReact(draftsFolder, postsFolder, imagesFolder, githubUsername, githubRepoName) {
   const root = createRoot(document.getElementById('react'));
-  root.render(<DraftsComponent />);
+  root.render(<DraftsComponent 
+    draftsFolder={draftsFolder}
+    postsFolder={postsFolder}
+    imagesFolder={imagesFolder}
+    githubUsername={githubUsername}
+    githubRepoName={githubRepoName}
+  />);
 }
 
-export async function initDrafts() {
+export async function initDrafts(draftsFolder, postsFolder, imagesFolder, githubUsername, githubRepoName) {
   accessToken = await getAccessToken();
-  setupReact();
+  setupReact(draftsFolder, postsFolder, imagesFolder, githubUsername, githubRepoName);
 }
