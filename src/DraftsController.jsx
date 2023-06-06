@@ -89,14 +89,23 @@ function DraftsComponent({
 
     let user = await getUser(accessToken);
 
-    var response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
-      owner: githubUsername,
-      repo: githubRepoName,
-      path: draftsFolder,
-      headers: {
-        'If-None-Match': '' //allows fresh data to be fetched, https://github.com/octokit/octokit.js/issues/890
-      }
-    });
+    let response;
+
+    try{
+      response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
+        owner: githubUsername,
+        repo: githubRepoName,
+        path: draftsFolder,
+        headers: {
+          'If-None-Match': '' //allows fresh data to be fetched, https://github.com/octokit/octokit.js/issues/890
+        }
+      });
+    }
+    catch(e){
+      setDraftsLoaded(true);
+      setDrafts([]);
+      return;
+    }
 
     //keep only the files with .md file extension to filter out images
     response.data = response.data.filter((file) => {
@@ -121,10 +130,10 @@ function DraftsComponent({
       <div style={{ fontSize: '1.6em', fontWeight: 600, display: 'flex', alignItems: 'center' }}>
         Drafts
         <div style={{ fontSize: '0.8em', paddingLeft: '0.5em', cursor: 'pointer', display: 'block' }}>
-          <button id="show-drafts" className="draft-toggle" style={{ display: isDraftsVisible ? 'none' : 'block' }} onClick={toggleDrafts}>
+          <button id="show-drafts" className="draft-toggle ecfw-cursor-pointer" style={{ display: isDraftsVisible ? 'none' : 'block' }} onClick={toggleDrafts}>
             [+]
           </button>
-          <button id="hide-drafts" className="draft-toggle" style={{ display: isDraftsVisible ? 'block' : 'none' }} onClick={toggleDrafts}>
+          <button id="hide-drafts" className="draft-toggle ecfw-cursor-pointer" style={{ display: isDraftsVisible ? 'block' : 'none' }} onClick={toggleDrafts}>
             [-]
           </button>
         </div>
@@ -154,6 +163,13 @@ function DraftsComponent({
           </>)}
         </div>
     } 
+    {
+      draftsLoaded && isDraftsVisible && drafts.length === 0 &&
+        <div style={{ padding: '1em', textAlign: 'center' }}>
+          <div style={{ fontSize: '1.2em', fontWeight: 600, paddingBottom: '0.5em' }}>No drafts found</div>
+          <div style={{ fontSize: '0.9em', paddingBottom: '0.5em' }}>Create a new draft by clicking the pencil icon above</div>
+        </div>
+    }
     {
       !draftsLoaded && isDraftsVisible &&
         <div style={{ margin: 'auto', width: 'fit-content' }}>

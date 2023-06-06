@@ -25,4 +25,4 @@ This project compiles the files from folder `/src` into the following files in t
 
 ### Package for distribution
 
-To package the library, replace the `__JS_PACKAGE_HOST__` value in `webpack.config.js`. Also change the mode from `development` to `production`. This value needs to be the future url of the package.Then, run `npm run build`.  Next, run `npm publish` to publish the package to npm. Make sure to change the README as well. The package can then be downloaded from jsdelivr into any HTML project.
+To package the library, replace the `__JS_PACKAGE_HOST__` value in `webpack.config.js`. This value needs to be the future url of the package. Also change the mode from `development` to `production`. Then, run `npm run build`.  Next, run `npm publish` to publish the package to npm. Make sure to change the README as well. The package can then be downloaded from jsdelivr into any HTML project.

@@ -54,6 +54,7 @@ export function Modal({
         };
       }, []);
 
+    //load the draft
     useEffect(() => {
         if(draft){
             const fetchData = async () => {
@@ -73,11 +74,21 @@ export function Modal({
 
     //async function to fetch default template file from github
     async function loadTemplate(){
-        const response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
-            owner: githubUsername,
-            repo: githubRepoName,
-            path: `${draftsFolder}/template.md`,
-        });
+        let response;
+        try{
+            response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
+                owner: githubUsername,
+                repo: githubRepoName,
+                path: `${draftsFolder}/template.md`,
+            });
+        }
+        catch(e){
+            console.log("No template detected. Continuing with empty draft.")
+            setFileContent('');
+            setOriginalFileContentWithImagesReplacedWithBlobs('');
+            return;
+        }
+
 
         const fileContent = Base64.decode(response.data.content);
         setFileContent(fileContent);
@@ -87,8 +98,10 @@ export function Modal({
         setOriginalFileContentWithImagesReplacedWithBlobs(fileContent);
     }
 
-    async function loadFileContent() {
-        setIsLoading(true);
+    async function loadFileContent(showSkeleton) {
+        if(showSkeleton){
+            setIsLoading(true);
+        }
         var response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
             owner: githubUsername,
             repo: githubRepoName,
@@ -133,15 +146,25 @@ export function Modal({
 
     async function deleteDraft(){
         setIsSavingToGithub(true);
-        console.log('deleting draft')
-        console.log(draft)
-        await octokit.rest.repos.deleteFile({
-            owner: githubUsername,
-            repo: githubRepoName,
-            path: `${draft.path}`,
-            message: 'delete draft [skip ci]',
-            sha: fileSha
-        })
+        console.log('trying to delete draft')
+        console.log(draft);
+        
+        //trying to delete draft
+        try{
+            await octokit.rest.repos.deleteFile({
+                owner: githubUsername,
+                repo: githubRepoName,
+                path: `${draft.path}`,
+                message: 'delete draft [skip ci]',
+                sha: fileSha
+            })
+        }
+        catch(e){
+            alert("There was an error deleting your draft from GitHub. Ensure this repository has been set up with the correct permissions for the GitHub app in a separate tab and try again.");
+            setIsSavingToGithub(false);
+            return;
+        }
+        
         loadDrafts();
 
         setIsSavingToGithub(false);
@@ -151,7 +174,7 @@ export function Modal({
     //publish draft by saving the markdown content to the _posts folder and the images to the uploads folder
     function publishDraft(){
         //save the draft content to the _posts folder
-        saveDraft('_posts', 'uploads', false);
+        saveDraft('_posts', 'uploads', false, true);
     }
 
     function syncContentAcrossProsemirrorAndTextarea(){
@@ -171,7 +194,7 @@ export function Modal({
     //and also creating the needed image files
     //this is parametrized to support publish, which can save new files to a new folder and delete files from the previous folder
     //if just saving drafts, then markdownFolder, imageFolder, previousMarkdownFolder and previousImageFolder should all be the same
-    async function saveDraft(publishMarkdownFolder, publishImageFolder, skipCi) {
+    async function saveDraft(publishMarkdownFolder, publishImageFolder, skipCi, closeAfterFinishing) {
         console.log('saving draft')
         setIsSavingToGithub(true);
 
@@ -191,26 +214,43 @@ export function Modal({
             contentToSave = await saveImagesToGithub(images, defaultDraftImageFolder, publishImageFolder, contentToSave);
         }
 
-        //if the draft exists, save it in the same path
-        //otherwise, create a new file with the path name being the date and the title encoded to be a filename
-        if(draft !== null){
-            //if the date is different than the one in the draft, rename the draft & delete the old one
-            // or if we are publishing
-            const newFileName = encodeFilename(title, date);
-            if(draft.path !== `${publishMarkdownFolder}/${newFileName}`){
-                await saveExistingDraftThatHasBeenRenamedToGithub(newFileName, publishMarkdownFolder, draft, skipCi, contentToSave, fileSha);
+        //trying to save draft
+        try{
+            //if the draft exists, save it in the same path
+            //otherwise, create a new file with the path name being the date and the title encoded to be a filename
+            if(draft !== null){
+                //if the date is different than the one in the draft, rename the draft & delete the old one
+                // or if we are publishing
+                const newFileName = encodeFilename(title, date);
+                if(draft.path !== `${publishMarkdownFolder}/${newFileName}`){
+                    await saveExistingDraftThatHasBeenRenamedToGithub(newFileName, publishMarkdownFolder, draft, skipCi, contentToSave, fileSha);
+                }
+                else{
+                    await saveExistingDraftToGithub(draft, skipCi, contentToSave, fileSha);
+                }
             }
             else{
-                await saveExistingDraftToGithub(draft, skipCi, contentToSave, fileSha);
+                await saveNewFileToGithub(title, date, publishMarkdownFolder, contentToSave, skipCi);
             }
         }
-        else{
-            await saveNewFileToGithub(title, date, publishMarkdownFolder, contentToSave, skipCi);
+        catch(e){
+            alert("There was an error saving your draft to GitHub. Ensure this repository has been set up with the correct permissions for the GitHub app in a separate tab and try again.");
+            setIsSavingToGithub(false);
+            return;
         }
 
-        setIsSavingToGithub(false);
-        loadDrafts();
-        setShowModalBoolean(false);
+
+
+        if(closeAfterFinishing){
+            loadDrafts();
+            setIsSavingToGithub(false);
+            setShowModalBoolean(false);
+        }
+        else{
+            //reload the draft
+            await loadFileContent(false);
+            setIsSavingToGithub(false);
+        }
     }
 
     async function saveImagesToGithub(images, defaultDraftImageFolder, publishImageFolder, contentToSave) {

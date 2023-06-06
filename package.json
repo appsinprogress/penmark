@@ -1,6 +1,6 @@
 {
   "name": "edit-blog-from-site",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "A package to enable a CMS embedded within your website",
   "scripts": {
     "build": "webpack",

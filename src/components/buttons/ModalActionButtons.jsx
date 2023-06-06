@@ -22,7 +22,7 @@ export function ModalActionButtons({
         <button id="dropdownDefaultButton"
             onClick={() => actions[0].action(null, null, true)}
             data-dropdown-toggle="dropdown"
-            className="ecfw-pr-12 ecfw-flex ecfw-h-10 ecfw-rounded-l-md ecfw-py-2 ecfw-px-4 ecfw-bg-primary ecfw-text-primary-foreground hover:ecfw-bg-primary/90"
+            className="ecfw-pr-10 ecfw-flex ecfw-h-10 ecfw-rounded-l-md ecfw-py-2 ecfw-px-4 ecfw-bg-primary ecfw-text-primary-foreground hover:ecfw-bg-primary/90"
             type="button">
             {actions[0].icon}
             {actions[0].title}
