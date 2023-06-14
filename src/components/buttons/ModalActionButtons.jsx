@@ -20,6 +20,7 @@ export function ModalActionButtons({
         className="ecfw-flex ecfw-relative"
     >
         <button id="dropdownDefaultButton"
+            data-testid="dropdownDefaultButton"
             onClick={() => actions[0].action(null, null, true)}
             data-dropdown-toggle="dropdown"
             className="ecfw-pr-10 ecfw-flex ecfw-h-10 ecfw-rounded-l-md ecfw-py-2 ecfw-px-4 ecfw-bg-primary ecfw-text-primary-foreground hover:ecfw-bg-primary/90"
@@ -29,6 +30,7 @@ export function ModalActionButtons({
         </button>
         <button
             onClick={() => setShowDropdown(!showDropdown)}
+            data-testid="dropdownButton"
             className="ecfw-flex ecfw-h-10 ecfw-rounded-r-md ecfw-py-2 ecfw-border-l-2 ecfw-border-slate-200 ecfw-px-3 ecfw-bg-primary ecfw-text-primary-foreground hover:ecfw-bg-primary/90">
             {showDropdown ?
                 <ChevronUp className="mr-2 h-4 w-4" />

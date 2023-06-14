@@ -16,6 +16,7 @@ export const MarkdownEditor = ({
   return (
     <div>
       <textarea
+        data-testid='markdown-editor'
         value={content}
         onChange={handleTextChange}
         rows={amountOfRows}

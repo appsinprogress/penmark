@@ -290,6 +290,7 @@ export function MarkdownToggleButton({
   }, [])
 
   return <button
+    data-testid='markdown-toggle-button'
     onClick={() => setIsMarkdown(!isMarkdown)}
     className='ecfw-ml-2 ecfw-bg-transparent ecfw-outline-none ecfw-text-md ecfw-font-semibold  ecfw-p-2
       ecfw-border-slate-300 ecfw-border ecfw-rounded-lg

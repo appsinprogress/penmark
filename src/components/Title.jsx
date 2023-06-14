@@ -47,7 +47,8 @@ export const Title = ({ value, setValue, date, setDate, isMarkdown, setIsMarkdow
         />
 
       </div>
-      <textarea type="text" value={value} onChange={handleChange} placeholder='Title'
+      <textarea type="text" value={value? value : ''} onChange={handleChange} placeholder='Title'
+        data-testid='textarea-title'
         ref={textareaRef}
         rows={1}
         onInput={handleTextareaResize}

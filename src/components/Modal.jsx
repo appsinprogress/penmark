@@ -15,15 +15,12 @@ import { BackButton } from "./buttons/ModalBackButton.jsx";
 import { Spinner } from "./Spinner.jsx";
 import { blobToBase64, loadImagesForContentAsBlobs, extractImageInfoFromMarkdown } from "../helpers/imageParsingHelpers.js";
 
-const accessToken = await getAccessToken();
 
 export function Modal({
     setShowModalBoolean, draft, loadDrafts, isDraft,
     postsFolder, draftsFolder, imagesFolder, githubUsername, githubRepoName
 }) {
-    var octokit = new Octokit({
-        auth: accessToken
-    });
+    var octokit;
 
     const draftDate = draft ? decodeFilename(draft.name).articleDate : new Date().toISOString().split('T')[0];
 
@@ -36,6 +33,18 @@ export function Modal({
     const fileContentRef = useRef('')
     const [isLoading, setIsLoading] = useState(false);
     const [isSavingToGithub, setIsSavingToGithub] = useState(false);
+    
+    async function setAccessToken() {
+        const accessToken = await getAccessToken();
+        octokit = new Octokit({
+            auth: accessToken
+        });
+    }
+
+    //upon component load, get access token and set it to octokit
+    useEffect(() => {
+        setAccessToken();
+    }, []);
 
     //set warning when the page is reloaded without saving
     useEffect(() => {
@@ -58,7 +67,7 @@ export function Modal({
     useEffect(() => {
         if(draft){
             const fetchData = async () => {
-                await loadFileContent();
+                await loadFileContent(true);
             };
             fetchData();
         }
@@ -74,21 +83,31 @@ export function Modal({
 
     //async function to fetch default template file from github
     async function loadTemplate(){
+
+        await setAccessToken();
+
         let response;
+        console.log('loading template')
+        console.log(`${draftsFolder}/template.md`)
+
         try{
             response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
                 owner: githubUsername,
                 repo: githubRepoName,
                 path: `${draftsFolder}/template.md`,
             });
+
+            if(!response.data || response.data.content === ''){
+                throw new Error('No template detected');
+            }
         }
         catch(e){
+            console.log(e);
             console.log("No template detected. Continuing with empty draft.")
             setFileContent('');
             setOriginalFileContentWithImagesReplacedWithBlobs('');
             return;
         }
-
 
         const fileContent = Base64.decode(response.data.content);
         setFileContent(fileContent);
@@ -99,9 +118,18 @@ export function Modal({
     }
 
     async function loadFileContent(showSkeleton) {
+
+        await setAccessToken();
+
         if(showSkeleton){
             setIsLoading(true);
         }
+
+        const accessToken = await getAccessToken();
+        octokit = new Octokit({
+            auth: accessToken
+        });
+
         var response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
             owner: githubUsername,
             repo: githubRepoName,
@@ -145,6 +173,8 @@ export function Modal({
     }
 
     async function deleteDraft(){
+        await setAccessToken();
+
         setIsSavingToGithub(true);
         console.log('trying to delete draft')
         console.log(draft);
@@ -174,7 +204,7 @@ export function Modal({
     //publish draft by saving the markdown content to the _posts folder and the images to the uploads folder
     function publishDraft(){
         //save the draft content to the _posts folder
-        saveDraft('_posts', 'uploads', false, true);
+        saveDraft(postsFolder, imagesFolder, false, true);
     }
 
     function syncContentAcrossProsemirrorAndTextarea(){
@@ -195,6 +225,8 @@ export function Modal({
     //this is parametrized to support publish, which can save new files to a new folder and delete files from the previous folder
     //if just saving drafts, then markdownFolder, imageFolder, previousMarkdownFolder and previousImageFolder should all be the same
     async function saveDraft(publishMarkdownFolder, publishImageFolder, skipCi, closeAfterFinishing) {
+        await setAccessToken();
+        
         console.log('saving draft')
         setIsSavingToGithub(true);
 

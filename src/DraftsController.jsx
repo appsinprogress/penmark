@@ -36,7 +36,7 @@ function DraftLine({ draft, setShowModalBoolean, setEditingDraft }) {
   );
 }
 
-function DraftsComponent({
+export function DraftsComponent({
   draftsFolder,
   postsFolder,
   imagesFolder,
@@ -145,6 +145,7 @@ function DraftsComponent({
         setEditingDraft(null);
       }}>
         <i
+          data-testid="cms-drafts-create"
           className="fa fa-pencil-square-o"
           id="cms-drafts-create"
           style={{ paddingRight: 4, cursor: 'pointer', transform: 'scale(1.3)' }}
@@ -156,6 +157,7 @@ function DraftsComponent({
         <div id="cms-drafts-draftlist">
           {drafts.map((draft, i) => <>
             <DraftLine
+              key={i}
               draft={draft}
               setShowModalBoolean={setShowModalWithBodyHeightAdjusted}
               setEditingDraft={setEditingDraft}

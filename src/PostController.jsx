@@ -8,7 +8,7 @@ import { setBodyToFixedHeight, addEditorToNavigationHistoryWithBackHandler } fro
 var postFilePathInGithub;
 var accessToken;
 
-function EditPostComponent({
+export function EditPostComponent({
   postFilePath,
   draftsFolder,
   postsFolder,
@@ -85,6 +85,7 @@ function EditPostComponent({
         <div id="cms-buttons">
             <button id="edit-button" className="blog-cms--button-outline"
                 onClick={handleEdit}
+                data-testid="edit-button"
             >
                 <i className="fa fa-pencil-square-o" style={{
                   paddingRight: 4
