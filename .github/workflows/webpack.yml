@@ -29,5 +29,4 @@ jobs:
         
     - name: Test
       run: |
-        npm install
         npm test
