@@ -8,7 +8,7 @@ A CMS you can embed directly into you Markdown-based, Github-backed website/blog
 * Own your data: drafts are stored in your repo. 📝
 
 This package is a set of 3 components that allow you to enable this CMS experience:
-* Login: used to log get GitHub credentials
+* Login: used to login to get GitHub credentials
 * Drafts: used to create & edit drafts (stored in your own GitHub under folder _drafts)
 * Edit: used to edit existing blog posts
 
