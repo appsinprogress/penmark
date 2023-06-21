@@ -2,14 +2,47 @@
 //it's responsibility is to inject the necessary styles, HTML content, and scripts 
 //to the target blog needed to provide the CMS functionality
 
-import { getAccessToken, dynamicallyLoadScript } from './shared.js';
-import { initDrafts } from './DraftsController.js';
+import { getAccessToken, dynamicallyLoadScript } from './helpers/userAccessHelpers.js';
+import { initDrafts } from './DraftsController.jsx';
 
 try{
     await getAccessToken();
 
-    var script = document.querySelector(`script[src="${__JS_PACKAGE_HOST__}/DraftsClient.js"]`);//TODO: make this dynamic
+    var script = document.querySelector(`script[src="${__JS_PACKAGE_HOST__}/DraftsClient.js"]`);
     
+    //the script looks like this
+    // <script 
+    //     type="module" 
+    //     src="http://localhost:9000/DraftsClient.js"
+    //     draftsFolder="drafts"
+    //     postsFolder="content/posts"
+    //     imagesFolder="static/images"
+    //     githubUsername="username>"
+    //     githubRepoName="blog"
+    // ></script>
+
+    //extract the information from the script tag
+    //default are jekyll values
+
+    //get the draft folder name
+    var draftsFolder = script.getAttribute('draftsFolder');
+    if(!draftsFolder) draftsFolder = '_drafts';
+
+    //get the posts folder name
+    var postsFolder = script.getAttribute('postsFolder');
+    if(!postsFolder) postsFolder = '_posts';
+
+    //get the images folder name
+    var imagesFolder = script.getAttribute('imagesFolder');
+    if(!imagesFolder) imagesFolder = 'uploads';
+
+    //get the github username
+    var githubUsername = script.getAttribute('githubUsername');
+
+    //get the github repo name
+    var githubRepoName = script.getAttribute('githubRepoName');
+
+
     //insert styles into html
     script.insertAdjacentHTML('afterend', /*html*/`
         <style>
@@ -118,13 +151,11 @@ try{
         <link rel="preconnect" href="https://api.github.com" />
         <link rel="preconnect" href="https://cdn.skypack.dev" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <div id="react"></div>
         <div id="cms-drafts" style="display: none;"></div>
     `);
     
-    //insert script for prosemirror into html
-    dynamicallyLoadScript(script, `${__JS_PACKAGE_HOST__}/prosemirror.js`); //TODO: make this dynamic
-    
-    initDrafts();
+    initDrafts(draftsFolder, postsFolder, imagesFolder, githubUsername, githubRepoName);
 }
 catch(e){
     //do nothing, user is not signed in

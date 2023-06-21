@@ -4,8 +4,8 @@
 
 //this file must be added to the HTML where the desired buttons are to be placed
 
-import { getAccessToken, dynamicallyLoadScript } from './shared.js';
-import { initPostEditor } from './PostController.js';
+import { getAccessToken, dynamicallyLoadScript } from './helpers/userAccessHelpers.js';
+import { initPostEditor } from './PostController.jsx';
 
 try{
     //this function will throw an error if the user is not logged in,
@@ -13,8 +13,42 @@ try{
     await getAccessToken();
 
     var script = document.querySelector(`script[src="${__JS_PACKAGE_HOST__}/PostClient.js"]`); //TODO: make this dynamic
-
     var postFilePath = script.getAttribute("postfilepath");
+
+    //the script looks like this
+    // <script 
+    //     type="module" 
+    //     src="http://localhost:9000/DraftsClient.js"
+    //     draftsFolder="drafts"
+    //     postsFolder="content/posts"
+    //     imagesFolder="static/images"
+    //     githubUsername="username>"
+    //     githubRepoName="blog"
+    // ></script>
+
+
+    //extract the information from the script tag
+    //default are jekyll values
+
+    //get the draft folder name
+    var draftsFolder = script.getAttribute('draftsFolder');
+    if(!draftsFolder) draftsFolder = '_drafts';
+
+    //get the posts folder name
+    var postsFolder = script.getAttribute('postsFolder');
+    if(!postsFolder) postsFolder = '_posts';
+
+    //get the images folder name
+    var imagesFolder = script.getAttribute('imagesFolder');
+    if(!imagesFolder) imagesFolder = 'uploads';
+
+    //get the github username
+    var githubUsername = script.getAttribute('githubUsername');
+
+    //get the github repo name
+    var githubRepoName = script.getAttribute('githubRepoName');
+
+    console.log(githubRepoName)
 
     //insert styles and divs into html
     script.insertAdjacentHTML('afterend', /*html*/`
@@ -37,21 +71,11 @@ try{
             }
         </style>
 
-        <div>
-            <div id="cms-buttons">
-                <button id="edit-button" class="blog-cms--button-outline">
-                    <i class="fa fa-pencil-square-o" style="padding-right: 4px;"></i>Edit
-                </button>
-            </div> 
-            <div id="modalParent">
-            </div>
+        <div id="react">
         </div>
     `);
 
-    //insert script for prosemirror into html
-    dynamicallyLoadScript(script, `${__JS_PACKAGE_HOST__}/prosemirror.js`); //TODO: make this dynamic
-
-    initPostEditor(postFilePath);
+    initPostEditor(postFilePath, draftsFolder, postsFolder, imagesFolder, githubUsername, githubRepoName);
 }
 catch(e){
     //do nothing, user is not logged in
