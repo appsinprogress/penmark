@@ -16,7 +16,7 @@ This package is a set of 3 components that allow you to enable this CMS experien
 
 Here is how to import these 3 components:
 1. Login Component: 
-   1. Add a hidden page of your blog (for instance, `/login`). This is intended to be only used by the editor of the blog, not readers of the blog, but anybody accessing this page will see the login buttons.
+   1. Add a hidden page of your blog (for instance, `/login`). This is intended to be only used by the editor of the blog, not readers of the blog. Anybody accessing this page will see the login buttons.
    2.  Add the following script to the body: 
         ```html 
         <script type="module" src="https://cdn.jsdelivr.net/npm/edit-blog-from-site@0.0.9/dist/LoginClient.js"></script>
