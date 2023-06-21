@@ -1,4 +1,4 @@
-# Edit Blog from Site 📝🐧
+# Penmark 📝🐧
 
 A CMS you can embed directly into you Markdown-based, Github-backed website/blog. No need to switch between multiple websites, your website/blog is the only place you need.
 
