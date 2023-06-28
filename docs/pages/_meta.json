@@ -1,0 +1,18 @@
+{
+  "index": {
+    "display": "hidden",
+    "type": "page",
+    "theme": {
+      "layout": "raw"
+    }
+  },
+  "docs": {
+    "type": "page",
+    "title": "Docs"
+  },
+  "examples": {
+    "type": "page",
+    "title": "Examples",
+    "href": "/docs/examples/nextjs"
+  }
+}

@@ -1,6 +1,6 @@
 {
-  "name": "edit-blog-from-site",
-  "version": "0.0.22",
+  "name": "penmark-cms",
+  "version": "1.0.0",
   "description": "A package to enable a CMS embedded within your website",
   "scripts": {
     "build": "webpack",

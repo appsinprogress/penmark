@@ -9,7 +9,7 @@ export async function getAccessToken() {
     if (editBlogContentFromSiteSession) {
         //retrieve github access token from azure function
 
-        var response = await fetch("https://edit-blog-content-from-site.azurewebsites.net/api/getAccessToken?" + new URLSearchParams({
+        var response = await fetch("https://penmark-oauth.appsinprogress.com/api/getAccessToken?" + new URLSearchParams({
             session: editBlogContentFromSiteSession
         }));
         var data = await response.json();
