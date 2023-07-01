@@ -17,7 +17,7 @@ import { blobToBase64, loadImagesForContentAsBlobs, extractImageInfoFromMarkdown
 
 
 export function Modal({
-    setShowModalBoolean, draft, loadDrafts, isDraft,
+    setShowModalBoolean, draft, setDraft, loadDrafts, isDraft,
     postsFolder, draftsFolder, imagesFolder, githubUsername, githubRepoName
 }) {
     var octokit;
@@ -31,7 +31,7 @@ export function Modal({
     const [fileSha, setFileSha] = useState('');
     const [isMarkdown, setIsMarkdown] = useState(false);
     const fileContentRef = useRef('')
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [isSavingToGithub, setIsSavingToGithub] = useState(false);
     
     async function setAccessToken() {
@@ -67,7 +67,7 @@ export function Modal({
     useEffect(() => {
         if(draft){
             const fetchData = async () => {
-                await loadFileContent(true);
+                await loadFileContent(true, draft);
             };
             fetchData();
         }
@@ -117,7 +117,7 @@ export function Modal({
         setOriginalFileContentWithImagesReplacedWithBlobs(fileContent);
     }
 
-    async function loadFileContent(showSkeleton) {
+    async function loadFileContent(showSkeleton, draft) {
 
         await setAccessToken();
 
@@ -129,6 +129,10 @@ export function Modal({
         octokit = new Octokit({
             auth: accessToken
         });
+
+        console.log('printing draft')
+
+        console.log(draft);
 
         var response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
             owner: githubUsername,
@@ -156,6 +160,8 @@ export function Modal({
         fileContentRef.current = fileContentWithImages;
         setOriginalFileContentWithImagesReplacedWithBlobs(fileContentWithImages);
         setIsLoading(false);
+
+        console.log('successfully loaded draft')
     }
 
     function handlePublishPress(){
@@ -246,6 +252,8 @@ export function Modal({
             contentToSave = await saveImagesToGithub(images, defaultDraftImageFolder, publishImageFolder, contentToSave);
         }
 
+        let newDraft;
+
         //trying to save draft
         try{
             //if the draft exists, save it in the same path
@@ -255,14 +263,15 @@ export function Modal({
                 // or if we are publishing
                 const newFileName = encodeFilename(title, date);
                 if(draft.path !== `${publishMarkdownFolder}/${newFileName}`){
-                    await saveExistingDraftThatHasBeenRenamedToGithub(newFileName, publishMarkdownFolder, draft, skipCi, contentToSave, fileSha);
+                    newDraft = await saveExistingDraftThatHasBeenRenamedToGithub(newFileName, publishMarkdownFolder, draft, skipCi, contentToSave, fileSha);        
                 }
                 else{
-                    await saveExistingDraftToGithub(draft, skipCi, contentToSave, fileSha);
+                    newDraft = await saveExistingDraftToGithub(draft, skipCi, contentToSave, fileSha);
                 }
             }
             else{
-                await saveNewFileToGithub(title, date, publishMarkdownFolder, contentToSave, skipCi);
+                console.log('saving new draft')
+                newDraft = await saveNewFileToGithub(title, date, publishMarkdownFolder, contentToSave, skipCi);
             }
         }
         catch(e){
@@ -272,17 +281,21 @@ export function Modal({
         }
 
 
+        console.log(newDraft)
+
+        //update the draft with the newly saved version
+        setDraft(newDraft);
+        loadDrafts();
 
         if(closeAfterFinishing){
-            loadDrafts();
-            setIsSavingToGithub(false);
             setShowModalBoolean(false);
         }
         else{
             //reload the draft
-            await loadFileContent(false);
-            setIsSavingToGithub(false);
+            await loadFileContent(false, newDraft);
         }
+
+        setIsSavingToGithub(false);
     }
 
     async function saveImagesToGithub(images, defaultDraftImageFolder, publishImageFolder, contentToSave) {
@@ -387,7 +400,7 @@ export function Modal({
         console.log("Renaming draft");
         const updateMessage = skipCi ? `update draft [skip ci]` : `update draft`;
         //rename the draft
-        await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+        const newFile = await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
             owner: githubUsername,
             repo: githubRepoName,
             path: `${publishMarkdownFolder}/${newFileName}`,
@@ -403,13 +416,15 @@ export function Modal({
             message: 'delete draft [skip ci]',
             sha: fileSha
         });
+
+        return newFile.data.content;
     }
 
     async function saveExistingDraftToGithub(draft, skipCi, contentToSave, fileSha) {
         console.log("Saving changes to file (no changes to filename)");
         //save the draft
         const message = skipCi ? `update draft [skip ci]` : `update draft`;
-        await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+        const newFile = await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
             owner: githubUsername,
             repo: githubRepoName,
             path: `${draft.path}`,
@@ -417,6 +432,8 @@ export function Modal({
             content: Base64.encode(contentToSave),
             sha: fileSha,
         });
+
+        return newFile.data.content;
     }
 
     async function saveNewFileToGithub(title, date, publishMarkdownFolder, contentToSave, skipCi){
@@ -428,13 +445,15 @@ export function Modal({
         console.log("Saving new file")
         //save the draft with a new name
         const message = skipCi? `create draft [skip ci]` : `create draft`
-        await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+        const newFile = await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
             owner: githubUsername,
             repo: githubRepoName,
             path: `${publishMarkdownFolder}/${encodeFilename(title, date)}`,
             message: message,
             content: Base64.encode(contentToSave),
         })
+
+        return newFile.data.content;
     }
 
     //set filecontentref function

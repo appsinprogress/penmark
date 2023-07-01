@@ -183,6 +183,7 @@ export function DraftsComponent({
         <Modal
           setShowModalBoolean={setShowModalWithBodyHeightAdjusted}
           draft={editingDraft}
+          setDraft={setEditingDraft}
           loadDrafts={loadDrafts}
           isDraft={true}
           draftsFolder={draftsFolder}

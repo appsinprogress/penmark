@@ -66,7 +66,7 @@ script.insertAdjacentHTML('afterend', /*html*/`
 
 
 //set href of login-script, with redirect uri to current page
-var loginLink = "https://edit-blog-content-from-site.azurewebsites.net/api/authorizeRequestHandler?redirect_uri=" + encodeURIComponent(window.location.href);
+var loginLink = "https://penmark-oauth.appsinprogress.com/api/authorizeRequestHandler?redirect_uri=" + encodeURIComponent(window.location.href);
 document.getElementById("login-script").href = loginLink;
 document.getElementById("logout").href = window.location.origin;
 
