@@ -153,6 +153,9 @@ export function Modal({
             console.log('images missing')
         }
 
+        //parse filecontent and add empty lines above all occurences of --- to prevent prosemirror/markdown-it from treating frontmatter as a title
+        fileContentWithImages = fileContentWithImages.replace(/---/g, '\n---');
+
         setFileContent(fileContentWithImages);
 
         const { articleDate, articleTitle } = decodeFilename(draft.name)
