@@ -84,6 +84,7 @@ export function Modal({
     //async function to fetch default template file from github
     async function loadTemplate(){
 
+        setIsLoading(true);
         await setAccessToken();
 
         let response;
@@ -106,6 +107,7 @@ export function Modal({
             console.log("No template detected. Continuing with empty draft.")
             setFileContent('');
             setOriginalFileContentWithImagesReplacedWithBlobs('');
+            setIsLoading(false);
             return;
         }
 
@@ -115,6 +117,7 @@ export function Modal({
         //set filecontentref
         fileContentRef.current = fileContent;
         setOriginalFileContentWithImagesReplacedWithBlobs(fileContent);
+        setIsLoading(false);
     }
 
     async function loadFileContent(showSkeleton, draft) {
