@@ -6,7 +6,10 @@ export function setBodyToFixedHeight() {
 
 export function addEditorToNavigationHistoryWithBackHandler(setShowModalBoolean) {
     //add editor path to the navigation history
-    history.pushState({ page: "editor" }, "editor", "/editor");
+    const currentUrl = new URL(window.location.href);
+    currentUrl.pathname += '/editor';
+    currentUrl.pathname = currentUrl.pathname.replace('//', '/');
+    history.pushState({ page: "editor" }, "editor", currentUrl.toString());
 
     //set back button to close the modal
     window.onpopstate = function (event) {
@@ -17,7 +20,10 @@ export function addEditorToNavigationHistoryWithBackHandler(setShowModalBoolean)
             document.body.style.overflow = "auto";
         }
         else{
-            history.pushState({ page: "editor" }, "editor", "/editor");
+            const currentUrl = new URL(window.location.href);
+            currentUrl.pathname += '/editor';
+            currentUrl.pathname = currentUrl.pathname.replace('//', '/');
+            history.pushState({ page: "editor" }, "editor", currentUrl.toString());
         }
     }
 }
