@@ -19,7 +19,7 @@ export function decodeFilename(filename) {
     return { articleTitle, articleDate };
   }
   catch {
-    return { articleTitle: filename, articleDate: '' }
+    return { articleTitle: filename, articleDate: null }
   }
 
 }
