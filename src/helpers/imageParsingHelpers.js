@@ -27,7 +27,7 @@ export function blobToBase64(blob) {
     });
 }
 
-export async function loadImagesForContentAsBlobs(fileContent, octokit) {
+export async function loadImagesForContentAsBlobs(fileContent, octokit, githubOwner, githubRepo, draftsFolderName, postsFolderName, imagesFolderName, isDraft) {
     //regex to find all the images
     const images = fileContent.match(/!\[.*?\]\(.*?\)/g);
 
@@ -49,11 +49,20 @@ export async function loadImagesForContentAsBlobs(fileContent, octokit) {
             let response = null
             try{
                 //fetch the image from the github
-                response = await octokit.rest.repos.getContent({
-                    owner: 'thomasgauvin',
-                    repo: 'blog',
-                    path: `_drafts/${imageFilename}`,
-                })
+                if(isDraft){
+                    response = await octokit.rest.repos.getContent({
+                        owner: githubOwner,
+                        repo: githubRepo,
+                        path: `${draftsFolderName}/${imageFilename}`,
+                    })
+                }
+                else{
+                    response = await octokit.rest.repos.getContent({
+                        owner: githubOwner,
+                        repo: githubRepo,
+                        path: `${imagesFolderName}/${imageFilename}`,
+                    })
+                }
             }
             catch(error){
                 console.log(error)

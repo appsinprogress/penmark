@@ -147,7 +147,7 @@ export function Modal({
         const fileContent = Base64.decode(response.data.content);
         let fileContentWithImages = fileContent;
         try{
-            fileContentWithImages = await loadImagesForContentAsBlobs(fileContent, octokit);
+            fileContentWithImages = await loadImagesForContentAsBlobs(fileContent, octokit, githubUsername, githubRepoName, draftsFolder, postsFolder, imagesFolder, isDraft);
         }
         catch(e){
             console.log('images missing')

@@ -160,6 +160,11 @@ export function ProseMirrorEditor({
 
       //insert image by changing the node.attrs.src to the blob url
       tr.steps[0].slice.content.content[0].attrs.src = url;
+
+      //create filename from current time
+      let filename = new Date().toISOString().replace(/:/g, '-') + '.png';
+      tr.steps[0].slice.content.content[0].attrs.title = filename;
+
       setEditorState((s) => s.apply(tr));
     }
     else {
