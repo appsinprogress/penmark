@@ -1,11 +1,13 @@
-# Penmark 📝🐧
+# 🖊️ Penmark
 
-A lightweight CMS you can embed directly into your Markdown-based, Github-backed website/blog. No need to switch between multiple websites, your website/blog is the only place you need.
+A lightweight CMS you can embed directly into your Markdown-based, Github-backed website/blog. No need to switch between multiple websites, your website is all you need.
 
 * Open source 🙌
 * No tracking/ads 📡🚫
 * WYSIWYG or Markdown support M⬇✍
 * Own your data: drafts are stored in your repo 📝
+
+![penmark-components](https://github.com/penmark-cms/penmark/assets/35609369/c96f0fc9-60c2-4e59-bea1-027fa6c9bf48)
 
 This package is a set of 3 components that allow you to enable this CMS experience:
 * Login: used to login to get GitHub credentials
