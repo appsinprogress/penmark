@@ -4,7 +4,7 @@ A lightweight CMS you can embed directly into your Markdown-based, Github-backed
 
 * Open source 🙌
 * No tracking/ads 📡🚫
-* WYSIWYG or Markdown support M⬇✍
+* WYSIWYG or Markdown support ✍
 * Own your data: drafts are stored in your repo 📝
 
 ![penmark-components](https://github.com/penmark-cms/penmark/assets/35609369/c96f0fc9-60c2-4e59-bea1-027fa6c9bf48)
