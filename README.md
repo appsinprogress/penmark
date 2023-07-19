@@ -7,7 +7,7 @@ A lightweight CMS you can embed directly into your Markdown-based, Github-backed
 * WYSIWYG or Markdown support ✍
 * Own your data: drafts are stored in your repo 📝
 
-![penmark-components](https://github.com/penmark-cms/penmark/assets/35609369/c96f0fc9-60c2-4e59-bea1-027fa6c9bf48)
+<img width="4268" alt="penmark-story" src="https://github.com/penmark-cms/penmark/assets/35609369/f23ea33a-5477-4ece-93a6-fd1cb2db5f0f">
 
 This package is a set of 3 components that you can add to your own website to enable this CMS experience:
 * Login: used to login to get GitHub credentials
