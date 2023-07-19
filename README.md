@@ -14,6 +14,12 @@ This package is a set of 3 components that you can add to your own website to en
 * Drafts: used to create & edit drafts (stored in your own GitHub repo)
 * Edit: used to edit existing blog posts
 
+## Why use Penmark?
+
+Static site generators are great, but they can be tedious to use. Editing Markdown files requires the use of an external editor, and any changes must be manually saved to the repository with Git. So, editing is limited to your computer, making editing on the go is difficult. 
+
+With Penmark, you can edit whenever inspiration strikes, directly from your website, and while keeping your GitHub repository as the single source of truth for your content. 
+
 ## Getting started 
 
 Adding Penmark to your site consists of adding the GitHub app to your repository, and then adding the 3 components to your site. The CMS experience will only be visible to logged in users, and won't affect your users. You may refer to [docs](https://penmark.appsinprogress.com/docs) for framework-specific configurations of Penmark.
