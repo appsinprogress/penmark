@@ -9,7 +9,7 @@ A lightweight CMS you can embed directly into your Markdown-based, Github-backed
 
 ![penmark-components](https://github.com/penmark-cms/penmark/assets/35609369/c96f0fc9-60c2-4e59-bea1-027fa6c9bf48)
 
-This package is a set of 3 components that allow you to enable this CMS experience:
+This package is a set of 3 components that you can add to your own website to enable this CMS experience:
 * Login: used to login to get GitHub credentials
 * Drafts: used to create & edit drafts (stored in your own GitHub repo)
 * Edit: used to edit existing blog posts
