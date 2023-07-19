@@ -37,6 +37,13 @@ Adding Penmark to your site consists of adding the GitHub app to your repository
         <script type="module" src="https://penmark.appsinprogress.com/dist/PostClient.js"></script>
         ```
     2. This will add an edit button only for logged in users.
+  
+## Examples
+
+Penmark can be added to any website or static site generator. Here are examples for popular SSGs:
+* [NextJS with Penmark](https://github.com/penmark-cms/penmark-nextjs-example)
+* [Hugo with Penmark](https://github.com/penmark-cms/penmark-hugo-example)
+* [Jekyll with Penmark](https://github.com/penmark-cms/penmark-jekyll-example)
 
 ## For additional details, refer to [docs](https://penmark.appsinprogress.com/docs)
 Docs specify how to configure Penmark for Jekyll, Hugo and NextJS static site generators, along with generic steps for all other static site generators.
