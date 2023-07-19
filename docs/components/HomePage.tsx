@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Pre } from '../components/nextra/Nextra-Pre'
-import { CompatibleSSGCard, HowToSSGSelector, HowItWorksStep, HowToStepSelector, SectionTitle, FeaturesTitle, FeaturesDescription } from './HomePageComponents'
+import { CompatibleSSGCard, HowToSSGSelector, HowItWorksStep, HowToStepSelector, SectionTitle, FeaturesTitle, FeaturesDescription, FeaturesImage } from './HomePageComponents'
 import {howToSSGConfigs} from './HomePageSSGConfigs';
+import Link from 'next/link';
 
 export default function HomePage() {
     const [selectedSSG, setSelectedSSG] = useState(Object.keys(howToSSGConfigs)[0]);
@@ -9,8 +10,13 @@ export default function HomePage() {
     const [howItWorksStep, setHowItWorksStep] = useState(0);
     
     return (
-        <div className="max-w-7xl m-auto px-6">
-            <div id="hero" className="sm:px-10 m-auto my-14">
+        <div className="max-w-7xl m-auto px-6 relative">
+            <div className="lg:block absolute hidden xl:right-[-1em] right-[1em] top-[-4em] h-20 ">
+                    <div className='h-full flex'>
+                        <img className="object-fill" src="/scribbles/enjoytheproject.png"></img>
+                    </div>
+            </div>
+            <div id="hero" className="sm:px-10 m-auto mt-20 mb-14">
                 <div className="md:text-5xl sm:text-4xl text-3xl leading-[1.2em] font-semibold text-center  max-w-5xl m-auto">
                     Penmark is an <span
                         style={{
@@ -21,15 +27,36 @@ export default function HomePage() {
                     GitHub-backed sites
                 </div>
                 <div className="md:text-2xl sm:text-xl text-lg text-zinc-500 text-center leading-[1.3em] max-w-3xl m-auto my-6">
-                    Edit your content directly from your site, wherever you are, and your changes are saved to your repository.
                 </div>
                 <div className="flex justify-center space-x-4 sm:text-lg text-md">
-                    <button className="border-2 border-black font-medium shadow-md sm:px-8 px-4 py-2 rounded-full">Get Started</button>
-                    <button className="border-2 border-black font-medium shadow-md sm:px-8 px-4 py-2 rounded-full">Watch Demo</button>
+                    <Link href="/docs/gettingstarted">
+                        <button className="hover:bg-slate-900 hover:text-white ease-in duration-100 border-2 border-black font-medium shadow-md sm:px-8 px-4 py-2 rounded-full">Get Started</button>
+                    </Link>
+                    <button className="hover:bg-slate-900 hover:text-white ease-in duration-100 border-2 border-black font-medium shadow-md sm:px-8 px-4 py-2 rounded-full">Watch Demo</button>
+                </div>
+                <div className="sm:flex hidden justify-center lg:h-16 h-14 ">
+                    <div className='h-full flex lg:ml-[-29.5em] lg:mt-[-0.5em] ml-[-26.5em] mt-[-1em]'>
+                        <img className="object-fill" src="/scribbles/itsfreeandopensource.png"></img>
+                    </div>
                 </div>
             </div>
-            <div id="hero-image" >
+            <div id="hero-image" className='relative'>
+                <div className="sm:block sm:absolute h-24 lg:top-[-45px] top-[-55px] left-[-30px] hidden">
+                    <div className='flex h-24'>
+                        <img className="object-fill" src="/scribbles/thisisyourcontentsite.png"></img>
+                    </div>
+                </div>
+                <div className="sm:block sm:absolute h-[14%] top-[52%] left-[1%] hidden">
+                    <div className='flex h-full'>
+                        <img className="object-fill" src="/scribbles/penmarkisonlyvisibletologgedinusers.png"></img>
+                    </div>
+                </div>
                 <img src="penmark-hero.png"></img>
+                <div className="sm:block sm:absolute lg:h-24 h-20 bottom-[-1.5em] right-[-1.5em] hidden">
+                    <div className='flex h-full'>
+                        <img className="object-fill" src="/scribbles/thiseditorpopsupasamodalwithinyourownsite.png"></img>
+                    </div>
+                </div>
             </div>
             <div id="hero-compatibility" className="mt-16 mb-24 md:px-10">
                 <div className="md:text-3xl text-xl my-4 font-semibold ">
@@ -55,7 +82,7 @@ export default function HomePage() {
                     </CompatibleSSGCard>
                 </div>
             </div>
-            <div id="hero-howto" className="md:my-48 my-40">
+            <div id="hero-howto" className="md:my-48 my-40 md:px-10">
                 <SectionTitle>
                     Add to your site in 5 minutes
                 </SectionTitle>
@@ -105,16 +132,23 @@ export default function HomePage() {
                     </div>
                 </div>
             </div>
-            <div id="hero-howitworks" className="md:my-48 my-40">
+            <div id="hero-howitworks" className="md:my-48 my-40 md:px-10 relative">
                 <SectionTitle>
                     How it works
                 </SectionTitle>
-                <div className="grid grid-cols-3 grid-rows-3 md:grid-flow-col grid-flow-row md:gap-4 gap-2 md:text-base text-sm">
+                <div className="sm:block absolute h-24 left-[-0.2em] top-[-0.5em] hidden">
+                    <div className='h-full flex'>
+                        <img className="object-fill" src="/scribbles/simpleas123.png"></img>
+                    </div>
+                </div>
+                <div className="grid grid-cols-3 grid-rows-3 lg:grid-flow-col grid-flow-row md:gap-6 gap-4 sm:text-base">
                     <HowItWorksStep onClick={
                         () => {
                             setHowItWorksStep(0);
                         }
-                    }>
+                        }
+                        selected={howItWorksStep === 0}
+                    >
                         <div className='font-semibold'>
                             Login
                         </div>
@@ -126,15 +160,19 @@ export default function HomePage() {
                         () => {
                             setHowItWorksStep(1);
                         }
-                    }>
+                        }
+                        selected={howItWorksStep === 1}
+                    >
                         <div className='font-semibold'>
-                            Make edits & save
+                            Edit & save
                         </div>
                         <div className='md:block hidden text-slate-500'>
                             Changes are committed to your drafts folder in your repository.
                         </div>
                     </HowItWorksStep>
-                    <HowItWorksStep onClick={() => {setHowItWorksStep(2)}}>
+                    <HowItWorksStep onClick={() => {setHowItWorksStep(2)}}
+                        selected={howItWorksStep === 2}
+                    >
                         <div className='font-semibold'>
                             Press publish
                         </div>
@@ -144,33 +182,39 @@ export default function HomePage() {
                     </HowItWorksStep>
                     <div
                         //tailwind class for centering text in the middle, with a border
-                        className="border rounded-lg shadow-md p-8 md:col-span-2 col-span-3 row-span-3 flex justify-center items-center"
+                        className="lg:col-span-2 col-span-3 row-span-3 flex justify-center items-center"
                     >
                         {
                             howItWorksStep === 0 ? (
-                                <img src="/screen_recordings/login.gif"></img>
+                                <img src="/screen_recordings/login.gif" className='shadow-md rounded'></img>
                             ) : howItWorksStep === 1 ? (
-                                <img src="/screen_recordings/edit-save.gif"></img>
+                                <img src="/screen_recordings/edit-save.gif" className='shadow-md rounded'></img>
                             ) : (
-                                <img src="/screen_recordings/publish.gif"></img>
+                                <img src="/screen_recordings/publish.gif" className='shadow-md rounded'></img>
                             )
                         }
                     </div>
                 </div>
 
             </div>
-            <div id="hero-features" className="md:my-48 my-40">
+            <div id="hero-features" className="md:my-48 my-40 md:px-10">
                 <SectionTitle>
                     The editing experience you’ve always wished for
                 </SectionTitle>
-                <div className="grid grid-cols-6 grid-rows-6 grid-flow-col gap-8">
-                    <div className="border rounded-lg shadow-md p-8 col-span-3 row-span-4">
+                <div className="sm:grid grid-cols-6 grid-rows-3 grid-flow-col gap-4">
+                    <div className="flex flex-col border rounded-lg shadow-md p-8 col-span-3 row-span-2 m-2">
                         <FeaturesTitle>
-                            WYSIWYG or Markdown: You choose!
+                            WYSIWYG or Markdown
                         </FeaturesTitle>
+                        <FeaturesDescription>
+                            You choose!
+                        </FeaturesDescription>
+                        <FeaturesImage>
+                            <img className="object-contain" src="/features_mocks/sample-penmark-wysiwyg-toggle.png"></img>
+                        </FeaturesImage>
                     </div>
                     <div
-                    className="border rounded-lg shadow-md p-8 col-span-3 row-span-2"
+                    className="border rounded-lg shadow-md p-8 col-span-3 row-span-1 m-2"
                     >
                         <FeaturesTitle>
                             GitHub backed
@@ -179,7 +223,7 @@ export default function HomePage() {
                             All changes are synced with your repository
                         </FeaturesDescription>
                     </div>
-                    <div className="border rounded-lg shadow-md p-8 col-span-3 row-span-2">
+                    <div className="border rounded-lg shadow-md p-8 col-span-3 row-span-1 m-2">
                         <FeaturesTitle>
                             Edit anywhere
                         </FeaturesTitle>
@@ -187,13 +231,16 @@ export default function HomePage() {
                             Edit with the device at your fingertips when inspiration strikes
                         </FeaturesDescription>
                     </div>
-                    <div className="border rounded-lg shadow-md p-8 col-span-3 row-span-4">
+                    <div className="flex flex-col border rounded-lg shadow-md p-8 col-span-3 row-span-2 m-2">
                         <FeaturesTitle>
                             Embedded within your site
                         </FeaturesTitle>
                         <FeaturesDescription>
                             No need for external sites or desktop tools
                         </FeaturesDescription>
+                        <FeaturesImage>
+                            <img className='object-contain' src="/features_mocks/sample-site-with-penmark.png"></img>
+                        </FeaturesImage>
                     </div>
                 </div>
                 

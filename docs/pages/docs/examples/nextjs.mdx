@@ -1,0 +1,141 @@
+# Add Penmark to a NextJS site
+
+The Penmark CMS is enabled by 3 components, the Login component (renders login buttons), the Drafts component (renders a list of your drafts) and the Post component (renders an edit button for individual posts).  The Drafts and Post component also render the Penmark editor when the edit button is clicked.
+
+This guide details the steps to add Penmark to your NextJS site. Alternatively, you can start from this Penmark & NextJS template, or you can view the commit adding Penmark to the NextJS website.
+
+Here are the steps to add Penmark to your NextJS site:
+
+### 1. Add the [Penmark-CMS GitHub App](https://github.com/apps/penmark-cms) to your repository.
+### 2. Add the Login Component
+    1. Create a `pages/login.tsx` file to add a login page, with the following content:
+
+    ```tsx
+    import { useEffect, useRef } from 'react'
+
+    export default function Login() {    
+
+        const penmarkRef = useRef(null)
+
+        useEffect(() => {
+            const script = document.createElement('script');
+            script.setAttribute('type', 'module');
+            script.setAttribute('src', 'https://penmark.appsinprogress.com/dist/LoginClient.js');
+        
+            penmarkRef.current.appendChild(script);
+
+            if(window.penmarkLoginInit) {
+                window.penmarkLoginInit();
+            }
+        }, []);
+        
+        return (
+            <>  
+                <div ref={penmarkRef}></div>
+            </>
+        );
+    }
+    ```
+
+    This NextJS code adds the Penmark script in a useEffect to allow the script to execute on page load within the browser. 
+    The window.penmarkLoginInit function is created by Penmark and allows you to initialize the login component, which needs to be called when 
+    this NextJS component is mounted. This is needed because client side navigation does not automatically retrigger scripts that have been
+    previously loaded, so this must be done in the useEffect.
+
+### 3. Add the Drafts Component
+    1. In the home page of your website (for example, `pages/index.tsx`), add the following code:
+
+    ```tsx
+    import { useRef, useEffect } from 'react'
+
+    export default function Index({ allPosts }: Props) {
+        [...]
+    
+        const penmarkRef = useRef(null)
+    
+        //inject penmark script
+        useEffect(() => { 
+            const script = document.createElement('script');
+            script.setAttribute('type', 'module');
+            script.setAttribute('src', 'https://penmark.appsinprogress.com/dist/DraftsClient.js');
+            script.setAttribute('draftsFolder', '_drafts');
+            script.setAttribute('postsFolder', '_posts');
+            script.setAttribute('imagesFolder', 'public/assets/blog');
+            script.setAttribute('githubUsername', 'penmark-cms');
+            script.setAttribute('githubRepoName', 'penmark-nextjs-example');
+            script.async = true;
+        
+            if (penmarkRef.current) {
+                penmarkRef.current.appendChild(script);
+            }
+        
+            if(window.penmarkDraftsInit) {
+                window.penmarkDraftsInit();
+            }
+        }, [penmarkRef]);
+    
+        return (
+            <>
+                [...]
+                    <div ref={penmarkRef}></div>
+                [...]
+            </>
+    )}
+    ```
+
+    Place your div with the `ref={penmarkRef}` in the location where you want the drafts to be rendered.
+
+    This NextJS code adds the Penmark script in a useEffect to allow the script to execute on page load within the browser. 
+    The window.penmarkLoginInit function is created by Penmark and allows you to initialize the login component, which needs to be called when 
+    this NextJS component is mounted. This is needed because client side navigation does not automatically retrigger scripts that have been
+    previously loaded, so this must be done in the useEffect.
+
+    2. This will only be visible when you are logged in, and only GitHub users who have contributor access to the underlying repository will be able to see the drafts.
+
+### 4. Add the Post component
+    1. In each page of your individual posts (for example, `/pages/posts/[slug].tsx`), add the following code:
+
+    ```tsx
+    import { useRef, useEffect } from 'react'
+
+    export default function Post() {
+        [...]
+
+        const penmarkRef = useRef(null)
+
+        useEffect(() => { 
+            const script = document.createElement('script');
+            script.setAttribute('type', 'module');
+            script.setAttribute('src', 'https://penmark.appsinprogress.com/dist/PostClient.js');
+            script.setAttribute('draftsFolder', 'drafts');
+            script.setAttribute('postsFolder', '_posts');
+            script.setAttribute('imagesFolder', 'public/assets/blog');
+            script.setAttribute('githubUsername', 'penmark-cms');
+            script.setAttribute('githubRepoName', 'penmark-nextjs-example');
+            script.setAttribute('postfilepath', `_posts/${post.slug}.md`);
+            penmarkRef.current.appendChild(script);
+
+            if(window.penmarkPostInit) {
+                window.penmarkPostInit();
+            }
+        }, []);
+        
+        return (
+            <>
+                [...]
+                    <div ref={penmarkRef}></div>
+                [...]
+            </>
+        )
+    }
+    ```
+
+    Once again, place your div with the `ref={penmarkRef}` in the location where you want the drafts to be rendered.
+
+    This NextJS code adds the Penmark script in a useEffect to allow the script to execute on page load within the browser. 
+    The window.penmarkLoginInit function is created by Penmark and allows you to initialize the login component, which needs to be called when 
+    this NextJS component is mounted. This is needed because client side navigation does not automatically retrigger scripts that have been
+    previously loaded, so this must be done in the useEffect.
+
+    2. This will add an edit button only for logged in users.
+

@@ -563,7 +563,7 @@ export function Modal({
                             isMarkdown ?
                                 <MarkdownEditor content={fileContent} setContent={setFileContent} />
                                 :
-                                <ProseMirrorEditor content={fileContentRef.current} setContentRefValue={setFileContentRef} />
+                                <ProseMirrorEditor content={fileContentRef.current} setContentRefValue={setFileContentRef} saveToGitHub={() => saveDraft(null, null, true, false)} />
                         }
                     </div>
                 </div>

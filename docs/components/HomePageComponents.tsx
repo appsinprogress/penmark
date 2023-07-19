@@ -31,8 +31,9 @@ export function HowToSSGSelector({
         sm:px-12
         px-4
         py-2
-        text-center border bg-white rounded-lg shadow-md flex justify-center items-center
-        ${selected ? 'bg-slate-100	' : 'border-gray-300'}
+        text-center border rounded-lg shadow-md flex justify-center items-center
+        cursor-pointer
+        ${selected ? 'bg-slate-100	' : ' bg-white'}
     `;
 
     return (
@@ -62,7 +63,7 @@ export function FeaturesTitle({
     children,
 }) {
     return (
-        <div className="text-3xl font-semibold">
+        <div className="sm:text-3xl text-xl font-semibold">
             {children}
         </div>
     )
@@ -72,7 +73,19 @@ export function FeaturesDescription({
     children,
 }) {
     return (
-        <div className="text-xl text-zinc-500">
+        <div className="sm:text-xl text-md text-zinc-500">
+            {children}
+        </div>
+    )
+}
+
+export function FeaturesImage({
+    children,
+}) {
+    return (
+        <div
+            className="mt-4 h-full flex align-center justify-center mx-[-1em]"
+        >
             {children}
         </div>
     )
@@ -90,10 +103,18 @@ export function SectionTitle({
 
 export function HowItWorksStep({
     children,
-    onClick
+    onClick,
+    selected
 }) {
+
+    const classNameVar = `
+    border rounded-lg shadow-md md:p-8 p-4 sm:col-span-1 col-span-1 md:block md:text-left flex justify-center items-center text-center cursor-pointer
+    ${selected ? 'bg-slate-100	' : 'bg-white'}
+    `;
+
+
     return (
-        <div className="border rounded-lg shadow-md md:p-8 p-4 sm:col-span-1 col-span-1 md:block md:text-left flex justify-center items-center text-center cursor-pointer" onClick={onClick}>
+        <div className={classNameVar} onClick={onClick}>
             {children}
         </div>
     )

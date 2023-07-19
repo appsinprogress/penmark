@@ -24,11 +24,11 @@
 // TODO: [X] add to edit existing drafts
 
 // TODO: [X] cleanup
-// TODO: [ ] deploy & package the npm package
+// TODO: [X] deploy & package the npm package
 
-// TODO: [ ] testing
-// TODO: [ ] parametrize and make usable by all
-// TODO: [ ] create repos & landing page
+// TODO: [X] testing
+// TODO: [X] parametrize and make usable by all
+// TODO: [X] create repos & landing page
 
 
 // TODO: [ ] Post launch
@@ -64,24 +64,34 @@ import {
 import { Heading } from "lucide-react";
 import { base64ToBlobUrl } from "../../helpers/imageParsingHelpers.js";
 
-const defaultMarkdownKeymap = buildKeymap(schema, {});
-const customKeymap = {
-  "Enter": splitListItem(schema.nodes.list_item),
-}
 
-const plugins = [
-  history(),
-  keymap(customKeymap),
-  keymap(defaultMarkdownKeymap),
-  keymap(baseKeymap),
-  dropCursor(),
-  gapCursor(),
-]
 
 export function ProseMirrorEditor({
   content,
-  setContentRefValue//need to avoid rerenders for prosemirror
+  setContentRefValue,//need to avoid rerenders for prosemirror
+  saveToGitHub
 }) {
+
+  const defaultMarkdownKeymap = buildKeymap(schema, {});
+  const customKeymap = {
+    "Enter": splitListItem(schema.nodes.list_item),
+    //cmd or ctrl + s to save
+    "Mod-s": (state, dispatch) => {
+      //dispatch save
+      saveToGitHub();
+      return true;
+    }
+  }
+
+  const plugins = [
+    history(),
+    keymap(customKeymap),
+    keymap(defaultMarkdownKeymap),
+    keymap(baseKeymap),
+    dropCursor(),
+    gapCursor(),
+  ]
+
   const [mount, setMount] = useState();
   const [editorState, setEditorState] = useState(
     EditorState.create({

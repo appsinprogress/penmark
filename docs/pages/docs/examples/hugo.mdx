@@ -1,0 +1,71 @@
+# Add Penmark to a Hugo static site
+
+The Penmark CMS is enabled by 3 components, the Login component (renders login buttons), the Drafts component (renders a list of your drafts) and the Post component (renders an edit button for individual posts).  The Drafts and Post component also render the Penmark editor when the edit button is clicked.
+
+This guide details the steps to add Penmark to your Hugo static site. Alternatively, you can start from this Penmark & Hugo template, or you can view the commit adding Penmark to the Hugo website.
+
+Here are the steps to add Penmark to your Hugo site:
+
+### 1. Add the [Penmark-CMS GitHub App](https://github.com/apps/penmark-cms) to your repository.
+### 2. Add the Login Component
+    1. Create a `content/login.md` file to add a login page, with the following content:
+    ```markdown
+    ---
+    title: "Login"
+    layout: login
+    ---
+    ```
+    2. Add the Penmark Login component script to the `layouts/_default/login.html` file:
+
+    ```html
+    <body>
+        <script type="module" src="https://penmark.appsinprogress.com/dist/LoginClient.js"></script>
+    </body>
+    ```
+### 3. Add the Drafts Component
+
+This step depends on your Hugo theme. The PaperMod theme is used as an example here. 
+
+If you are using a theme, you will need to override the files of your theme to add 
+the Penmark scripts. See these [instructions](https://zwbetz.com/override-a-hugo-theme/) for more details (essentially, you must copy `themes/foo/layouts/index.html` to `layouts/index.html`, and then edit the `layouts/index.html` file)
+
+
+
+    1. Override your home page to add the Penmark Drafts script. Add the following to the `layouts/_default/list.html` file where you want the drafts to appear:
+
+    ```html
+    <script 
+        type="module" 
+        src="https://penmark.appsinprogress.com/dist/DraftsClient.js"
+        draftsFolder="{enter the folder where your private drafts are stored}"
+        postsFolder="{enter the folder where your public posts are stored}"
+        imagesFolder="{enter the folder where your public images are stored}"
+        githubUsername="{enter your GitHub username}"
+        githubRepoName="{enter your GitHub repo name}"
+    ></script>
+    ```
+    2. This will only be visible when you are logged in, and only GitHub users who have contributor access to the underlying repository will be able to see the drafts.
+
+### 4. Add the Post component
+
+This step also depends on your Hugo theme. The PaperMod theme is used as an example here.
+
+If you are using a theme, you will need to override the files of your theme to add 
+the Penmark scripts. See these [instructions](https://zwbetz.com/override-a-hugo-theme/) for more details (essentially, you must copy `themes/foo/layouts/index.html` to `layouts/index.html`, and then edit the `layouts/index.html` file)
+
+    1. Override your single post page to add the Penmark Drafts script. Add the following to the `layouts/_default/single.html` file where you want the drafts to appear:
+    ```html
+    <script 
+        type="module" 
+        src="https://penmark.appsinprogress.com/dist/PostClient.js"
+        draftsFolder="drafts"
+        postsFolder="content/posts"
+        imagesFolder="static/images"
+        githubUsername="thomasgauvin"
+        githubRepoName="hugo-penmark-example"
+        postfilepath="{{ $filePath }}"
+    ></script>
+    ```
+    2. This will add an edit button only for logged in users.
+
+
