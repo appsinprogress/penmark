@@ -16,7 +16,7 @@ This package is a set of 3 components that you can add to your own website to en
 
 ## Getting started 
 
-You may also refer to [docs](https://penmark.appsinprogress.com/docs) for framework-specific configuration.
+Adding Penmark to your site consists of adding the GitHub app to your repository, and then adding the 3 components to your site. The CMS experience will only be visible to logged in users, and won't affect your users. You may refer to [docs](https://penmark.appsinprogress.com/docs) for framework-specific configurations of Penmark.
 
 1. Ensure you have the [Penmark-CMS GitHub App](https://github.com/apps/penmark-cms) installed on your repository. 
 1. Login Component: 
