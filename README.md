@@ -16,6 +16,8 @@ This package is a set of 3 components that you can add to your own website to en
 
 ## Getting started 
 
+You may also refer to [docs](https://penmark.appsinprogress.com/docs) for framework-specific configuration.
+
 1. Ensure you have the [Penmark-CMS GitHub App](https://github.com/apps/penmark-cms) installed on your repository. 
 1. Login Component: 
    1. Add a hidden page of your blog (for instance, `/login`). This is intended to be only used by the editor of the blog, not readers of the blog. Anybody accessing this page will see the login buttons.
@@ -37,5 +39,6 @@ This package is a set of 3 components that you can add to your own website to en
     2. This will add an edit button only for logged in users.
 
 ## For additional details, refer to [docs](https://penmark.appsinprogress.com/docs)
+Docs specify how to configure Penmark for Jekyll, Hugo and NextJS static site generators, along with generic steps for all other static site generators.
 
 Inspired by [utterances](https://github.com/utterance/utterances).
