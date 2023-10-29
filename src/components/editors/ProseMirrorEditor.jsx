@@ -237,7 +237,7 @@ export function ProseMirrorEditor({
         </div>
       </div>
 
-      <div ref={setMount} className="ecfw-prosemirror ecfw-h-full ecfw-m-4 ecfw-outline-none"
+      <div ref={setMount} className="ecfw-prosemirror ecfw-h-full ecfw-m-4 ecfw-outline-none ecfw-prose ecfw-max-w-none"
         data-testid="prosemirror-editor"
         style={{
           minHeight: '70vh',

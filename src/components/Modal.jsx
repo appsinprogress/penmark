@@ -514,7 +514,7 @@ export function Modal({
             backgroundColor: 'white',
             overflowY: 'scroll',
             paddingBottom: '4em',
-            zIndex: 1
+            zIndex: 50
         }}>
             {
                 isSavingToGithub && //dark grey overlay with spinner in the middle

@@ -13,7 +13,7 @@ To serve the package for local development, run `npm run serve`. This uses webpa
 ### How to use the development package locally (with development projects)
 
 * Edit the `webpack.config.js` of this project, to change the value of **__JS_PACKAGE_HOST__** to `http://localhost:9000`. Also change the mode from 'production' to 'development'.
-* Run `npm install`, and `npm serve`. The assests are now hosted at `http://localhost:9000/PostClient.js` (for instance).
+* Run `npm install`, and `npm run serve`. The assests are now hosted at `http://localhost:9000/PostClient.js` (for instance).
 * Replace the usage of the library in your project to the locally served files (`http://localhost:9000/PostClient.js`) by changing the import scripts.
 
 

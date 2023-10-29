@@ -50,9 +50,7 @@ module.exports = {
     //replace __JS_PACKAGE_HOST__ strings with the host of this package with the DefinePlugin
     plugins: [
         new webpack.DefinePlugin({
-            // __JS_PACKAGE_HOST__: JSON.stringify("http://10.0.0.169:9000") //for local development with host 0.0.0.0
             // __JS_PACKAGE_HOST__: JSON.stringify("http://localhost:9000") //for local development
-            // __JS_PACKAGE_HOST__: JSON.stringify("https://cdn.jsdelivr.net/npm/penmark-cms@1.0.0/dist") //for production (archived)
             __JS_PACKAGE_HOST__: JSON.stringify("https://penmark.appsinprogress.com/dist") //for production
         }),
         new webpack.ProvidePlugin({
