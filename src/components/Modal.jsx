@@ -1,3 +1,5 @@
+// TODO: Header z-index fix is behind modal
+
 import React, { useEffect, useState, useRef } from "react";
 import "../styles/styles.css";
 import "../styles/basestyles.scss";
@@ -514,7 +516,7 @@ export function Modal({
             backgroundColor: 'white',
             overflowY: 'scroll',
             paddingBottom: '4em',
-            zIndex: 50
+            zIndex: 1
         }}>
             {
                 isSavingToGithub && //dark grey overlay with spinner in the middle
